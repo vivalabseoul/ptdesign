@@ -29,7 +29,7 @@ export const paymentPlans: PaymentPlanConfig[] = [
   {
     id: 'basic',
     name: '베이직',
-    price: 50000,
+    price: 99000,
     currency: 'KRW',
     features: [
       '전체 분석 결과 확인',
@@ -42,7 +42,7 @@ export const paymentPlans: PaymentPlanConfig[] = [
   {
     id: 'pro',
     name: '프로',
-    price: 120000,
+    price: 299000,
     currency: 'KRW',
     features: [
       '전체 분석 결과 확인',

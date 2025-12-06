@@ -3,6 +3,8 @@ import { Footer } from "../components/Footer";
 import { Check, X } from "lucide-react";
 import { useAuth } from "../contexts/AuthContext";
 import { useState } from "react";
+import { PaymentButton } from "../components/PaymentButton";
+import { PaymentPlan } from "../utils/payment/nicepay";
 
 export function PricingPage() {
   const { openAuthModal } = useAuth();
@@ -11,8 +13,10 @@ export function PricingPage() {
   const plans = [
     {
       id: "micro-snap",
+      planId: "basic" as PaymentPlan,
       name: "마이크로 스냅",
       price: "29,000",
+      priceNum: 29000,
       desc: "첫 화면만 빠르게 개선",
       usp: "24시간 내 납품",
       features: [
@@ -26,8 +30,10 @@ export function PricingPage() {
     },
     {
       id: "snap",
+      planId: "basic" as PaymentPlan,
       name: "스냅 (Entry)",
       price: "99,000",
+      priceNum: 99000,
       desc: "가성비 진단으로 이슈 파악",
       usp: "가성비 진단으로 이슈를 빠르게 파악",
       features: [
@@ -41,8 +47,10 @@ export function PricingPage() {
     },
     {
       id: "cvr-booster",
+      planId: "pro" as PaymentPlan,
       name: "CVR 부스터",
       price: "299,000",
+      priceNum: 299000,
       desc: "바로 테스트 가능한 AB 레디 팩",
       usp: "바로 테스트 가능한 AB 레디 팩",
       features: [
@@ -169,8 +177,8 @@ export function PricingPage() {
                   ))}
                 </ul>
 
-                <button
-                  onClick={() => openAuthModal("signup")}
+                <PaymentButton
+                  planId={plan.planId}
                   className={`w-full py-4 rounded-xl font-bold text-base transition-all duration-300 transform hover:scale-[1.02] ${
                     plan.highlight
                       ? "bg-[var(--accent)] text-white shadow-lg shadow-[var(--accent)]/30 hover:shadow-[var(--accent)]/50"
@@ -178,7 +186,7 @@ export function PricingPage() {
                   }`}
                 >
                   지금 시작하기
-                </button>
+                </PaymentButton>
               </div>
             ))}
           </div>
