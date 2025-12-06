@@ -1,0 +1,209 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --primary: #111111;
+    --accent: #ee6c4d;
+    --secondary: #84A98C;
+    --bg-light: #f8f9fa;
+    --text-dark: #1a1a1a;
+    --text-gray: #6b7280;
+    --success: #84A98C;
+    --warning: #f59e0b;
+  }
+
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  body {
+    font-family: "Pretendard", -apple-system, BlinkMacSystemFont, system-ui,
+      Roboto, sans-serif;
+    color: var(--text-dark);
+    background: var(--bg-light);
+    line-height: 1.6;
+    overflow-x: hidden;
+  }
+
+  h1 {
+    font-size: clamp(2rem, 5vw, 3.5rem);
+    font-weight: 800;
+    line-height: 1.2;
+    letter-spacing: -0.02em;
+  }
+
+  h2 {
+    font-size: clamp(1.75rem, 4vw, 2.75rem);
+    font-weight: 700;
+    line-height: 1.3;
+    letter-spacing: -0.01em;
+  }
+
+  h3 {
+    font-size: clamp(1.5rem, 3vw, 1.875rem);
+    font-weight: 600;
+    line-height: 1.4;
+  }
+
+  h4 {
+    font-size: clamp(1.25rem, 2.5vw, 1.5rem);
+    font-weight: 600;
+    line-height: 1.5;
+  }
+
+  p {
+    font-size: clamp(0.875rem, 1.5vw, 1.125rem);
+    line-height: 1.7;
+  }
+
+  button {
+    font-family: inherit;
+  }
+
+  input,
+  select,
+  textarea {
+    background-color: #ffffff;
+    color: #111111;
+  }
+
+  input::placeholder,
+  textarea::placeholder {
+    color: #6b7280;
+  }
+
+  /* 박스 영역에서 벗어나는 콘텐츠 방지 */
+  img,
+  video,
+  iframe {
+    max-width: 100%;
+    height: auto;
+  }
+
+  /* 긴 URL이나 텍스트가 박스를 넘치지 않도록 */
+  .break-words {
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    word-break: break-word;
+  }
+}
+
+/* Animations */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@layer utilities {
+  .dashboard-container {
+    @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6;
+  }
+
+  /* 리포트 페이지 PDF 최적화 */
+  .analysis-report-page #report-container {
+    @apply max-w-7xl mx-auto;
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+  }
+
+  @media (min-width: 640px) {
+    .analysis-report-page #report-container {
+      padding-left: 2rem;
+      padding-right: 2rem;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .analysis-report-page #report-container {
+      padding-left: 3rem;
+      padding-right: 3rem;
+    }
+  }
+
+  @media print {
+    .analysis-report-page #report-container {
+      max-width: 100% !important;
+      padding: 15mm 20mm !important;
+    }
+  }
+
+  .card-base {
+    @apply bg-white rounded-xl border border-gray-200 overflow-hidden;
+  }
+
+  .card-padding {
+    @apply p-6;
+  }
+
+  .section-spacing {
+    @apply mb-8;
+  }
+
+  .analysis-report-page {
+    --primary: #111111;
+    --secondary: #4b4b4b;
+    --accent: #000000;
+    --success: #222222;
+    --warning: #777777;
+    color: #111111;
+    background-color: #ffffff;
+  }
+
+  .analysis-report-page .monochrome-panel-light {
+    background-color: #f6f6f6;
+  }
+
+  .analysis-report-page .monochrome-panel-muted {
+    background-color: #ededed;
+  }
+
+  .analysis-report-page .monochrome-border {
+    border-color: #e5e7eb;
+  }
+
+  .analysis-report-page .monochrome-button {
+    background-color: #000000;
+    color: #ffffff;
+  }
+}
