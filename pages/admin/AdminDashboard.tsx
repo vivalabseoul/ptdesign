@@ -45,7 +45,7 @@ import { analyzeWebsite } from "../../lib/openai";
 import { AnalysisLoading } from "../../components/AnalysisLoading";
 
 export function AdminDashboard() {
-  const { login, user } = useAuth();
+  const { user } = useAuth();
   const navigate = useNavigate();
   const [topProjects, setTopProjects] = useState<any[]>([]);
   const [newUrl, setNewUrl] = useState("");
@@ -253,31 +253,6 @@ export function AdminDashboard() {
     },
   ];
 
-  const handleSwitchView = async (role: "customer" | "expert") => {
-    if (
-      confirm(
-        `${
-          role === "customer" ? "고객" : "전문가"
-        } 데모 계정으로 전환하시겠습니까?`
-      )
-    ) {
-      const accounts = {
-        customer: { email: "customer@test.com", password: "test1234" },
-        expert: { email: "expert@test.com", password: "test1234" },
-      };
-      try {
-        await login(accounts[role].email, accounts[role].password);
-        // 확실한 권한 갱신을 위해 페이지 새로고침과 함께 이동
-        navigate(
-          role === "customer" ? "/customer/dashboard" : "/expert/dashboard"
-        );
-      } catch (error) {
-        console.error("Login failed:", error);
-        alert("계정 전환에 실패했습니다. 잠시 후 다시 시도해주세요.");
-      }
-    }
-  };
-
   return (
     <DashboardLayout>
       <div className="dashboard-container">
@@ -303,27 +278,13 @@ export function AdminDashboard() {
               전체 시스템 현황을 한눈에 확인하세요
             </p>
           </div>
-          <div className="flex gap-2">
-            <button
-              onClick={() => setShowNewAnalysis(true)}
-              className="flex items-center gap-2 px-4 sm:px-6 py-3 rounded-xl text-white font-semibold transition-all hover:shadow-lg hover:scale-105 text-base sm:text-base whitespace-nowrap"
-              style={{ background: "var(--accent)" }}
-            >
-              <Plus className="w-5 h-5" />새 분석 시작
-            </button>
-            <button
-              onClick={() => handleSwitchView("customer")}
-              className="px-4 py-2 rounded-lg bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium text-base transition-colors"
-            >
-              고객 데모 뷰
-            </button>
-            <button
-              onClick={() => handleSwitchView("expert")}
-              className="px-4 py-2 rounded-lg bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium text-base transition-colors"
-            >
-              전문가 데모 뷰
-            </button>
-          </div>
+          <button
+            onClick={() => setShowNewAnalysis(true)}
+            className="flex items-center gap-2 px-4 sm:px-6 py-3 rounded-xl text-white font-semibold transition-all hover:shadow-lg hover:scale-105 text-base sm:text-base whitespace-nowrap"
+            style={{ background: "var(--accent)" }}
+          >
+            <Plus className="w-5 h-5" />새 분석 시작
+          </button>
         </div>
 
         {/* New Analysis Modal */}

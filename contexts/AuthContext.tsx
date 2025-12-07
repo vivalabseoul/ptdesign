@@ -40,18 +40,6 @@ const LOCAL_USER_KEY = 'protouchdesign:authUser';
 const CUSTOM_USERS_KEY = 'protouchdesign:customUsers';
 const isBrowser = typeof window !== 'undefined';
 
-const BUILT_IN_USERS: MockUserRecord[] = [
-  {
-    id: 'mock-test-account',
-    email: 'test@protouch.com',
-    name: '테스트계정',
-    role: 'customer',
-    subscriptionTier: 'free',
-    freeAnalysisUsed: false,
-    password: 'test1234',
-  },
-];
-
 const generateId = () => {
   if (typeof crypto !== 'undefined' && crypto.randomUUID) {
     return crypto.randomUUID();
@@ -97,18 +85,11 @@ const saveCustomUsers = (users: MockUserRecord[]) => {
 };
 
 const getMockUserByEmail = (email: string): MockUserRecord | null => {
-  const builtIn = BUILT_IN_USERS.find((user) => user.email === email);
-  if (builtIn) return builtIn;
   const customUsers = loadCustomUsers();
   return customUsers.find((user) => user.email === email) ?? null;
 };
 
 const getMockUserById = (userId: string): UserProfile | null => {
-  const builtIn = BUILT_IN_USERS.find((user) => user.id === userId);
-  if (builtIn) {
-    const { password, ...profile } = builtIn;
-    return profile;
-  }
   const customUsers = loadCustomUsers();
   const match = customUsers.find((user) => user.id === userId);
   if (!match) return null;

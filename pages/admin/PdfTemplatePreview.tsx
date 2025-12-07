@@ -1,31 +1,14 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { DashboardLayout } from "../../components/DashboardLayout";
 import { Download, FileText } from "lucide-react";
 import {
-  SAMPLE_REPORT_DATA,
+  getAllAnalyses,
+  getAnalysisReport,
+  AnalysisProject,
 } from "../../lib/api/analysis";
 import { generateReportPDF, createOverviewTemplateHTML } from "../../lib/reportPdfTemplate";
 import { ReportSummary, EvaluationCriteria, Improvement } from "../customer/report/types";
-
-const evaluationCriteria = SAMPLE_REPORT_DATA.evaluationCriteria as unknown as EvaluationCriteria[];
-const improvements = SAMPLE_REPORT_DATA.improvements as unknown as Improvement[];
-
-const reportSummary: ReportSummary = {
-  ...SAMPLE_REPORT_DATA,
-  totalScore: SAMPLE_REPORT_DATA.totalScore,
-  grade: "B", // Calculated dynamically later
-  status: "completed",
-  url: "https://example.com", // Placeholder or from sample data
-  analyzedAt: new Date().toISOString(),
-  analyst: "AI Analyst",
-  currentMetrics: {
-    ...SAMPLE_REPORT_DATA.currentMetrics,
-    mobileBounceRate: SAMPLE_REPORT_DATA.currentMetrics.mobileBounceRate || "0%",
-  },
-  industryBenchmark: SAMPLE_REPORT_DATA.industryBenchmark,
-  targetMetrics: SAMPLE_REPORT_DATA.targetMetrics,
-};
 
 const getGrade = (score: number) => {
   if (score >= 90) return "A";
@@ -37,8 +20,94 @@ const getGrade = (score: number) => {
 export function PdfTemplatePreview() {
   const navigate = useNavigate();
   const [isGenerating, setIsGenerating] = useState(false);
+  const [projects, setProjects] = useState<AnalysisProject[]>([]);
+  const [selectedProjectId, setSelectedProjectId] = useState<string>("");
+  const [reportData, setReportData] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
 
-  // 샘플 데이터 준비
+  useEffect(() => {
+    loadProjects();
+  }, []);
+
+  useEffect(() => {
+    if (selectedProjectId) {
+      loadReportData(selectedProjectId);
+    }
+  }, [selectedProjectId]);
+
+  const loadProjects = async () => {
+    try {
+      const allProjects = await getAllAnalyses();
+      const completedProjects = allProjects.filter(p => p.status === "completed");
+      setProjects(completedProjects);
+      if (completedProjects.length > 0) {
+        setSelectedProjectId(completedProjects[0].id);
+      }
+    } catch (error) {
+      console.error("Failed to load projects:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const loadReportData = async (projectId: string) => {
+    try {
+      const report = await getAnalysisReport(projectId);
+      setReportData(report?.report_data || null);
+    } catch (error) {
+      console.error("Failed to load report:", error);
+      setReportData(null);
+    }
+  };
+
+  if (loading) {
+    return (
+      <DashboardLayout>
+        <div className="dashboard-container bg-white">
+          <div className="flex items-center justify-center min-h-screen">
+            <p className="text-gray-600">프로젝트를 불러오는 중...</p>
+          </div>
+        </div>
+      </DashboardLayout>
+    );
+  }
+
+  if (projects.length === 0) {
+    return (
+      <DashboardLayout>
+        <div className="dashboard-container bg-white">
+          <div className="flex items-center justify-center min-h-screen">
+            <div className="text-center">
+              <p className="text-gray-600 mb-4">완료된 프로젝트가 없습니다.</p>
+              <button
+                onClick={() => navigate("/admin/dashboard")}
+                className="px-6 py-3 rounded-xl text-white font-semibold"
+                style={{ background: "var(--primary)" }}
+              >
+                대시보드로 돌아가기
+              </button>
+            </div>
+          </div>
+        </div>
+      </DashboardLayout>
+    );
+  }
+
+  if (!reportData) {
+    return (
+      <DashboardLayout>
+        <div className="dashboard-container bg-white">
+          <div className="flex items-center justify-center min-h-screen">
+            <p className="text-gray-600">리포트 데이터를 불러오는 중...</p>
+          </div>
+        </div>
+      </DashboardLayout>
+    );
+  }
+
+  const evaluationCriteria = reportData.evaluationCriteria as unknown as EvaluationCriteria[];
+  const improvements = reportData.improvements as unknown as Improvement[];
+
   const totalScore = Math.round(
     evaluationCriteria.reduce(
       (sum, criteria) => sum + criteria.score * (criteria.weight / 100),
@@ -47,9 +116,19 @@ export function PdfTemplatePreview() {
   );
 
   const report: ReportSummary = {
-    ...reportSummary,
+    ...reportData,
     totalScore,
     grade: getGrade(totalScore),
+    status: "completed",
+    url: projects.find(p => p.id === selectedProjectId)?.url || "",
+    analyzedAt: new Date().toISOString(),
+    analyst: "AI Analyst",
+    currentMetrics: {
+      ...reportData.currentMetrics,
+      mobileBounceRate: reportData.currentMetrics?.mobileBounceRate || "0%",
+    },
+    industryBenchmark: reportData.industryBenchmark,
+    targetMetrics: reportData.targetMetrics,
   };
 
   // Top 3 개선 항목만 추출 (종합분석용)
@@ -105,15 +184,28 @@ export function PdfTemplatePreview() {
                 있습니다.
               </p>
             </div>
-            <button
-              onClick={handleGeneratePDF}
-              disabled={isGenerating}
-              className="flex items-center gap-2 px-6 py-3 rounded-xl text-white font-semibold transition-all hover:shadow-lg disabled:opacity-50"
-              style={{ background: "var(--primary)" }}
-            >
-              <Download className="w-5 h-5" />
-              {isGenerating ? "생성 중..." : "종합분석 다운로드"}
-            </button>
+            <div className="flex flex-col sm:flex-row gap-3">
+              <select
+                value={selectedProjectId}
+                onChange={(e) => setSelectedProjectId(e.target.value)}
+                className="px-4 py-3 rounded-xl border-2 border-gray-200 focus:border-[var(--accent)] outline-none"
+              >
+                {projects.map((project) => (
+                  <option key={project.id} value={project.id}>
+                    {project.url}
+                  </option>
+                ))}
+              </select>
+              <button
+                onClick={handleGeneratePDF}
+                disabled={isGenerating}
+                className="flex items-center gap-2 px-6 py-3 rounded-xl text-white font-semibold transition-all hover:shadow-lg disabled:opacity-50 whitespace-nowrap"
+                style={{ background: "var(--primary)" }}
+              >
+                <Download className="w-5 h-5" />
+                {isGenerating ? "생성 중..." : "종합분석 다운로드"}
+              </button>
+            </div>
           </div>
         </div>
 
