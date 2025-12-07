@@ -1,4 +1,5 @@
 import { supabase } from "../supabase";
+import type { EvaluationCriteria, Improvement, ReportMetrics } from "../../pages/customer/report/types";
 
 export interface AnalysisProject {
   id: string;
@@ -7,6 +8,15 @@ export interface AnalysisProject {
   status: "pending" | "analyzing" | "completed" | "reviewed";
   created_at: string;
   updated_at: string;
+}
+
+export interface ReportData {
+  totalScore: number;
+  evaluationCriteria: EvaluationCriteria[];
+  improvements: Improvement[];
+  currentMetrics: ReportMetrics;
+  industryBenchmark: ReportMetrics;
+  targetMetrics: ReportMetrics;
 }
 
 const MOCK_PROJECTS_KEY = "protouchdesign:mockProjects";
@@ -42,7 +52,7 @@ const updateMockProject = (
   throw new Error("Mock project not found");
 };
 
-const saveMockReport = (projectId: string, reportData: any) => {
+const saveMockReport = (projectId: string, reportData: ReportData) => {
   try {
     const raw = localStorage.getItem(MOCK_REPORTS_KEY);
     const reports = raw ? JSON.parse(raw) : {};
@@ -113,7 +123,7 @@ export async function updateProjectStatus(
   return data as AnalysisProject;
 }
 
-export async function saveAnalysisReport(projectId: string, reportData: any) {
+export async function saveAnalysisReport(projectId: string, reportData: ReportData) {
   if (projectId.startsWith("mock-")) {
     return saveMockReport(projectId, reportData);
   }
@@ -207,7 +217,7 @@ const deleteMockProject = (projectId: string) => {
 
 export async function deleteAnalysis(projectId: string) {
   if (projectId.startsWith("mock-")) {
-    await deleteMockProject(projectId);
+    deleteMockProject(projectId);
     return;
   }
 

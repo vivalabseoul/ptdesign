@@ -9,7 +9,6 @@ import {
   AlertCircle,
 } from "lucide-react";
 import { useAuth } from "../contexts/AuthContext";
-import { SupabaseTest } from "../components/SupabaseTest";
 
 export function SignupPage() {
   const [formData, setFormData] = useState({
@@ -76,9 +75,6 @@ export function SignupPage() {
       className="min-h-screen flex items-center justify-center px-4 py-12"
       style={{ background: "var(--bg-light)" }}
     >
-      {/* Supabase Connection Test */}
-      <SupabaseTest />
-
       <div className="absolute inset-0 -z-10 opacity-30">
         <div
           className="absolute inset-0"
