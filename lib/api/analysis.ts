@@ -14,7 +14,7 @@ export interface ReportData {
   totalScore: number;
   evaluationCriteria: EvaluationCriteria[];
   improvements: Improvement[];
-  currentMetrics: ReportMetrics;
+  currentMetrics: ReportMetrics & { mobileBounceRate: string };
   industryBenchmark: ReportMetrics;
   targetMetrics: ReportMetrics;
 }

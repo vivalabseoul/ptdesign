@@ -25,10 +25,10 @@ export async function analyzeWebsite(url: string, apiKey?: string) {
 
   const prompt = `
     Analyze the main page UI/UX of: ${url}
-    
+
     Focus ONLY on the homepage/landing page. Provide a quick analysis in Korean.
 
-    JSON Structure:
+    JSON Structure (ALL fields are REQUIRED):
     {
       "totalScore": number (0-100),
       "evaluationCriteria": [
@@ -37,7 +37,8 @@ export async function analyzeWebsite(url: string, apiKey?: string) {
           "score": number (0-100),
           "weight": number,
           "description": string,
-          "methodology": string
+          "methodology": string,
+          "subcriteria": []
         }
       ],
       "improvements": [
@@ -59,15 +60,20 @@ export async function analyzeWebsite(url: string, apiKey?: string) {
         "bounceRate": string,
         "avgSessionTime": string,
         "pagesPerSession": string,
-        "conversionRate": string
+        "conversionRate": string,
+        "mobileBounceRate": string
       },
       "industryBenchmark": {
         "bounceRate": string,
-        "avgSessionTime": string
+        "avgSessionTime": string,
+        "pagesPerSession": string,
+        "conversionRate": string
       },
       "targetMetrics": {
         "bounceRate": string,
-        "avgSessionTime": string
+        "avgSessionTime": string,
+        "pagesPerSession": string,
+        "conversionRate": string
       }
     }
 
@@ -75,6 +81,7 @@ export async function analyzeWebsite(url: string, apiKey?: string) {
     1. At least 3 improvements (most critical only).
     2. Vary categories and priorities.
     3. Keep descriptions concise.
+    4. Include ALL required fields in the response.
   `;
 
   try {
