@@ -1,106 +1,93 @@
 import { useState } from "react";
 import { DashboardLayout } from "../../components/DashboardLayout";
-import { Users, Search, Filter, MoreVertical, Mail, Phone, Calendar, Award } from "lucide-react";
+import { Activity, Search, Filter, TrendingUp, Calendar, Award, Clock, BarChart3 } from "lucide-react";
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
 
-interface Member {
+interface MemberUsage {
   id: string;
   name: string;
   email: string;
   company: string;
-  role: "customer" | "expert" | "admin";
   plan: "Starter" | "Professional" | "Enterprise";
   status: "active" | "inactive" | "trial";
-  approvalStatus?: "pending" | "approved" | "rejected";
   joinDate: string;
   analysisCount: number;
   lastActive: string;
+  avgSessionTime: string;
+  totalSpent: string;
 }
 
-export function MemberManagement() {
+export function MemberUsage() {
   const [searchTerm, setSearchTerm] = useState("");
-  const [filterRole, setFilterRole] = useState("all");
   const [filterPlan, setFilterPlan] = useState("all");
   const [filterStatus, setFilterStatus] = useState("all");
 
   // Mock data
-  const members: Member[] = [
+  const members: MemberUsage[] = [
     {
       id: "1",
       name: "김철수",
       email: "kim@example.com",
       company: "Example Corp",
-      role: "customer",
       plan: "Professional",
       status: "active",
-      approvalStatus: "approved",
       joinDate: "2024-01-15",
       analysisCount: 12,
-      lastActive: "2024-11-20"
+      lastActive: "2024-11-20",
+      avgSessionTime: "45분",
+      totalSpent: "₩180,000"
     },
     {
       id: "2",
       name: "이영희",
       email: "lee@startup.io",
       company: "Startup Inc",
-      role: "expert",
       plan: "Enterprise",
       status: "active",
-      approvalStatus: "approved",
       joinDate: "2024-03-22",
       analysisCount: 28,
-      lastActive: "2024-11-21"
+      lastActive: "2024-11-21",
+      avgSessionTime: "1시간 20분",
+      totalSpent: "₩850,000"
     },
     {
       id: "3",
       name: "박민수",
       email: "park@company.kr",
       company: "Company Ltd",
-      role: "customer",
       plan: "Starter",
       status: "trial",
-      approvalStatus: "approved",
       joinDate: "2024-11-10",
       analysisCount: 3,
-      lastActive: "2024-11-19"
+      lastActive: "2024-11-19",
+      avgSessionTime: "20분",
+      totalSpent: "₩0"
     },
     {
       id: "4",
       name: "정수진",
       email: "jung@agency.net",
       company: "Agency Pro",
-      role: "expert",
       plan: "Professional",
       status: "active",
-      approvalStatus: "pending",
       joinDate: "2024-02-08",
       analysisCount: 19,
-      lastActive: "2024-11-21"
+      lastActive: "2024-11-21",
+      avgSessionTime: "55분",
+      totalSpent: "₩290,000"
     },
     {
       id: "5",
       name: "최동욱",
       email: "choi@shop.com",
       company: "Shop Online",
-      role: "customer",
       plan: "Starter",
       status: "inactive",
-      approvalStatus: "approved",
       joinDate: "2024-08-15",
       analysisCount: 5,
-      lastActive: "2024-10-30"
-    },
-    {
-      id: "6",
-      name: "관리자",
-      email: "admin@protouchdesign.com",
-      company: "ProTouch Design",
-      role: "admin",
-      plan: "Enterprise",
-      status: "active",
-      approvalStatus: "approved",
-      joinDate: "2024-01-01",
-      analysisCount: 0,
-      lastActive: "2024-11-21"
+      lastActive: "2024-10-30",
+      avgSessionTime: "15분",
+      totalSpent: "₩25,000"
     }
   ];
 
@@ -110,39 +97,11 @@ export function MemberManagement() {
       member.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
       member.company.toLowerCase().includes(searchTerm.toLowerCase());
 
-    const matchesRole = filterRole === "all" || member.role === filterRole;
     const matchesPlan = filterPlan === "all" || member.plan === filterPlan;
     const matchesStatus = filterStatus === "all" || member.status === filterStatus;
 
-    return matchesSearch && matchesRole && matchesPlan && matchesStatus;
+    return matchesSearch && matchesPlan && matchesStatus;
   });
-
-  const getRoleColor = (role: string) => {
-    switch (role) {
-      case "customer": return "#3B82F6"; // Blue
-      case "expert": return "#8B5CF6"; // Purple
-      case "admin": return "#EF4444"; // Red
-      default: return "gray";
-    }
-  };
-
-  const getRoleLabel = (role: string) => {
-    switch (role) {
-      case "customer": return "고객";
-      case "expert": return "전문가";
-      case "admin": return "관리자";
-      default: return role;
-    }
-  };
-
-  const getRoleDescription = (role: string) => {
-    switch (role) {
-      case "customer": return "분석 서비스 이용 고객";
-      case "expert": return "분석 리포트 작성 전문가";
-      case "admin": return "시스템 관리자";
-      default: return "";
-    }
-  };
 
   const getPlanColor = (plan: string) => {
     switch (plan) {
@@ -171,29 +130,17 @@ export function MemberManagement() {
     }
   };
 
-  const getApprovalStatusLabel = (status?: string) => {
-    switch (status) {
-      case "pending": return "승인대기";
-      case "approved": return "승인완료";
-      case "rejected": return "거부됨";
-      default: return "-";
-    }
-  };
+  const stats = [
+    { label: "총 매출", value: "₩1,345,000", color: "var(--success)", icon: TrendingUp },
+    { label: "총 분석 횟수", value: "67회", color: "var(--accent)", icon: BarChart3 },
+    { label: "평균 세션", value: "52분", color: "var(--secondary)", icon: Clock },
+    { label: "활성 구독", value: "4개", color: "var(--primary)", icon: Activity }
+  ];
 
-  const getApprovalStatusColor = (status?: string) => {
-    switch (status) {
-      case "pending": return "#F59E0B"; // Amber
-      case "approved": return "var(--success)";
-      case "rejected": return "#EF4444"; // Red
-      default: return "#6B7280";
-    }
-  };
-
-  const roleStats = [
-    { label: "전체 회원", value: members.length, color: "var(--accent)" },
-    { label: "고객", value: members.filter(m => m.role === "customer").length, color: "#3B82F6", description: "분석 서비스 이용" },
-    { label: "전문가", value: members.filter(m => m.role === "expert").length, color: "#8B5CF6", description: "리포트 작성" },
-    { label: "승인 대기", value: members.filter(m => m.approvalStatus === "pending").length, color: "#F59E0B", description: "전문가 승인 대기 중" }
+  const usageByPlan = [
+    { plan: "Starter", count: 8, revenue: 25000 },
+    { plan: "Professional", count: 31, revenue: 470000 },
+    { plan: "Enterprise", count: 28, revenue: 850000 }
   ];
 
   return (
@@ -203,75 +150,56 @@ export function MemberManagement() {
         <div className="mb-8">
           <div className="flex items-center gap-3 mb-4">
             <div className="w-12 h-12 rounded-xl flex items-center justify-center" style={{ background: 'var(--accent)15' }}>
-              <Users className="w-6 h-6" style={{ color: 'var(--accent)' }} />
+              <Activity className="w-6 h-6" style={{ color: 'var(--accent)' }} />
             </div>
             <div>
-              <h1 style={{ color: 'var(--primary)' }}>회원 관리</h1>
-              <p className="text-gray-600">전체 회원 현황을 관리하고 모니터링합니다</p>
+              <h1 style={{ color: 'var(--primary)' }}>회원 사용량 관리</h1>
+              <p className="text-gray-600">회원별 사용 통계 및 플랜 현황을 확인합니다</p>
             </div>
           </div>
         </div>
 
-        {/* Role Stats */}
+        {/* Stats */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-          {roleStats.map((stat, index) => (
-            <div key={index} className="bg-white rounded-2xl p-6 shadow-lg hover:shadow-xl transition-shadow">
-              <div className="text-3xl font-bold mb-1" style={{ color: stat.color }}>
-                {stat.value}
+          {stats.map((stat, index) => {
+            const Icon = stat.icon;
+            return (
+              <div key={index} className="bg-white rounded-2xl p-6 shadow-lg">
+                <div className="flex items-center gap-3 mb-2">
+                  <div className="w-10 h-10 rounded-lg flex items-center justify-center" style={{ background: `${stat.color}15` }}>
+                    <Icon className="w-5 h-5" style={{ color: stat.color }} />
+                  </div>
+                </div>
+                <div className="text-3xl font-bold mb-1" style={{ color: stat.color }}>
+                  {stat.value}
+                </div>
+                <div className="text-base text-gray-600">{stat.label}</div>
               </div>
-              <div className="text-base font-semibold text-gray-700">{stat.label}</div>
-              {stat.description && (
-                <div className="text-sm text-gray-500 mt-1">{stat.description}</div>
-              )}
-            </div>
-          ))}
+            );
+          })}
         </div>
 
-        {/* Role Definition Guide */}
-        <div className="bg-gradient-to-r from-blue-50 to-purple-50 rounded-2xl p-6 shadow-lg mb-8">
-          <h3 className="text-xl font-bold mb-4" style={{ color: 'var(--primary)' }}>
-            회원 등급 정의
+        {/* Usage Chart */}
+        <div className="bg-white rounded-2xl p-6 shadow-lg mb-8">
+          <h3 className="text-xl font-bold mb-6" style={{ color: 'var(--primary)' }}>
+            플랜별 사용량 및 매출
           </h3>
-          <div className="grid md:grid-cols-3 gap-4">
-            <div className="bg-white rounded-xl p-4">
-              <div className="flex items-center gap-3 mb-2">
-                <div className="w-10 h-10 rounded-full flex items-center justify-center text-white" style={{ background: '#3B82F6' }}>
-                  <Users className="w-5 h-5" />
-                </div>
-                <span className="font-bold text-lg" style={{ color: '#3B82F6' }}>고객</span>
-              </div>
-              <p className="text-sm text-gray-600">
-                분석 서비스를 이용하는 일반 고객입니다. 웹사이트 분석을 요청하고 리포트를 받아볼 수 있습니다.
-              </p>
-            </div>
-            <div className="bg-white rounded-xl p-4">
-              <div className="flex items-center gap-3 mb-2">
-                <div className="w-10 h-10 rounded-full flex items-center justify-center text-white" style={{ background: '#8B5CF6' }}>
-                  <Award className="w-5 h-5" />
-                </div>
-                <span className="font-bold text-lg" style={{ color: '#8B5CF6' }}>전문가</span>
-              </div>
-              <p className="text-sm text-gray-600">
-                분석 리포트를 작성하는 전문가입니다. 회원가입 후 관리자 승인이 필요합니다.
-              </p>
-            </div>
-            <div className="bg-white rounded-xl p-4">
-              <div className="flex items-center gap-3 mb-2">
-                <div className="w-10 h-10 rounded-full flex items-center justify-center text-white" style={{ background: '#EF4444' }}>
-                  <Filter className="w-5 h-5" />
-                </div>
-                <span className="font-bold text-lg" style={{ color: '#EF4444' }}>관리자</span>
-              </div>
-              <p className="text-sm text-gray-600">
-                시스템 전체를 관리하는 관리자입니다. 회원 관리, 승인 처리, 통계 확인 등의 권한이 있습니다.
-              </p>
-            </div>
-          </div>
+          <ResponsiveContainer width="100%" height={300}>
+            <BarChart data={usageByPlan}>
+              <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
+              <XAxis dataKey="plan" stroke="#6B7280" />
+              <YAxis yAxisId="left" stroke="#6B7280" />
+              <YAxis yAxisId="right" orientation="right" stroke="#6B7280" />
+              <Tooltip />
+              <Bar yAxisId="left" dataKey="count" fill="var(--accent)" name="분석 횟수" radius={[8, 8, 0, 0]} />
+              <Bar yAxisId="right" dataKey="revenue" fill="var(--success)" name="매출 (₩)" radius={[8, 8, 0, 0]} />
+            </BarChart>
+          </ResponsiveContainer>
         </div>
 
         {/* Filters */}
         <div className="bg-white rounded-2xl p-6 shadow-lg mb-6">
-          <div className="grid md:grid-cols-4 gap-4">
+          <div className="grid md:grid-cols-3 gap-4">
             {/* Search */}
             <div className="relative">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
@@ -282,21 +210,6 @@ export function MemberManagement() {
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="w-full pl-10 pr-4 py-3 rounded-lg border-2 border-gray-200 focus:border-[var(--accent)] outline-none"
               />
-            </div>
-
-            {/* Role Filter */}
-            <div className="relative">
-              <Filter className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
-              <select
-                value={filterRole}
-                onChange={(e) => setFilterRole(e.target.value)}
-                className="w-full pl-10 pr-4 py-3 rounded-lg border-2 border-gray-200 focus:border-[var(--accent)] outline-none appearance-none"
-              >
-                <option value="all">모든 등급</option>
-                <option value="customer">고객</option>
-                <option value="expert">전문가</option>
-                <option value="admin">관리자</option>
-              </select>
             </div>
 
             {/* Plan Filter */}
@@ -341,25 +254,25 @@ export function MemberManagement() {
                     회원 정보
                   </th>
                   <th className="px-6 py-4 text-left font-semibold" style={{ color: 'var(--primary)' }}>
-                    등급
-                  </th>
-                  <th className="px-6 py-4 text-left font-semibold" style={{ color: 'var(--primary)' }}>
                     플랜
                   </th>
                   <th className="px-6 py-4 text-left font-semibold" style={{ color: 'var(--primary)' }}>
                     상태
                   </th>
                   <th className="px-6 py-4 text-left font-semibold" style={{ color: 'var(--primary)' }}>
-                    승인 상태
+                    분석 횟수
                   </th>
                   <th className="px-6 py-4 text-left font-semibold" style={{ color: 'var(--primary)' }}>
-                    분석 횟수
+                    평균 세션
+                  </th>
+                  <th className="px-6 py-4 text-left font-semibold" style={{ color: 'var(--primary)' }}>
+                    총 사용액
                   </th>
                   <th className="px-6 py-4 text-left font-semibold" style={{ color: 'var(--primary)' }}>
                     가입일
                   </th>
                   <th className="px-6 py-4 text-left font-semibold" style={{ color: 'var(--primary)' }}>
-                    작업
+                    최근 활동
                   </th>
                 </tr>
               </thead>
@@ -368,7 +281,7 @@ export function MemberManagement() {
                   <tr key={member.id} className="border-b border-gray-100 hover:bg-gray-50 transition-colors">
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-full flex items-center justify-center text-white" style={{ background: getRoleColor(member.role) }}>
+                        <div className="w-10 h-10 rounded-full flex items-center justify-center text-white" style={{ background: 'var(--primary)' }}>
                           {member.name.charAt(0)}
                         </div>
                         <div>
@@ -378,17 +291,6 @@ export function MemberManagement() {
                           <div className="text-base text-gray-500">{member.email}</div>
                           <div className="text-sm text-gray-400">{member.company}</div>
                         </div>
-                      </div>
-                    </td>
-                    <td className="px-6 py-4">
-                      <div>
-                        <span
-                          className="px-3 py-1 rounded-full text-base font-semibold text-white inline-block"
-                          style={{ background: getRoleColor(member.role) }}
-                        >
-                          {getRoleLabel(member.role)}
-                        </span>
-                        <div className="text-xs text-gray-500 mt-1">{getRoleDescription(member.role)}</div>
                       </div>
                     </td>
                     <td className="px-6 py-4">
@@ -411,23 +313,24 @@ export function MemberManagement() {
                       </div>
                     </td>
                     <td className="px-6 py-4">
-                      {member.role === "expert" ? (
-                        <span
-                          className="px-3 py-1 rounded-full text-sm font-semibold text-white"
-                          style={{ background: getApprovalStatusColor(member.approvalStatus) }}
-                        >
-                          {getApprovalStatusLabel(member.approvalStatus)}
-                        </span>
-                      ) : (
-                        <span className="text-base text-gray-400">-</span>
-                      )}
-                    </td>
-                    <td className="px-6 py-4">
                       <div className="flex items-center gap-2">
                         <Award className="w-4 h-4 text-gray-400" />
                         <span className="font-semibold" style={{ color: 'var(--primary)' }}>
                           {member.analysisCount}회
                         </span>
+                      </div>
+                    </td>
+                    <td className="px-6 py-4">
+                      <div className="flex items-center gap-2">
+                        <Clock className="w-4 h-4 text-gray-400" />
+                        <span className="text-base text-gray-600">
+                          {member.avgSessionTime}
+                        </span>
+                      </div>
+                    </td>
+                    <td className="px-6 py-4">
+                      <div className="font-semibold" style={{ color: 'var(--success)' }}>
+                        {member.totalSpent}
                       </div>
                     </td>
                     <td className="px-6 py-4">
@@ -437,9 +340,9 @@ export function MemberManagement() {
                       </div>
                     </td>
                     <td className="px-6 py-4">
-                      <button className="p-2 hover:bg-gray-100 rounded-lg transition-colors">
-                        <MoreVertical className="w-5 h-5 text-gray-400" />
-                      </button>
+                      <div className="text-base text-gray-600">
+                        {member.lastActive}
+                      </div>
                     </td>
                   </tr>
                 ))}

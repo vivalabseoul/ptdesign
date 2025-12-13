@@ -73,7 +73,12 @@ export function AuthModal({ isOpen, onClose, initialMode = "login" }: AuthModalP
 
     try {
       const profile = await signup(email, password, name, role);
-      
+
+      // 전문가 회원가입인 경우 승인 대기 안내
+      if (role === 'expert') {
+        alert('전문가 회원가입이 완료되었습니다.\n관리자 승인 후 이용 가능합니다.\n승인 결과는 이메일로 안내드립니다.');
+      }
+
       // 회원가입 후 메인 페이지로 리다이렉트 (저장된 URL 복원을 위해)
       navigate("/");
       onClose();
@@ -189,7 +194,7 @@ export function AuthModal({ isOpen, onClose, initialMode = "login" }: AuthModalP
               <form onSubmit={handleSignup} className="space-y-6">
                 {/* Role Selection */}
                 <div>
-                  <div className="grid grid-cols-3 gap-2">
+                  <div className="grid grid-cols-2 gap-2">
                     <button
                       type="button"
                       onClick={() => setRole("customer")}
@@ -214,19 +219,12 @@ export function AuthModal({ isOpen, onClose, initialMode = "login" }: AuthModalP
                     >
                       전문가
                     </button>
-                    <button
-                      type="button"
-                      onClick={() => setRole("admin")}
-                      className={`py-3 rounded-lg font-semibold transition-all ${
-                        role === "admin"
-                          ? "text-white shadow-lg"
-                          : "bg-gray-100 text-gray-600 hover:bg-gray-200"
-                      }`}
-                      style={role === "admin" ? { background: 'var(--accent)' } : {}}
-                    >
-                      관리자
-                    </button>
                   </div>
+                  {role === "expert" && (
+                    <p className="mt-2 text-sm text-gray-600">
+                      * 전문가 회원가입은 관리자 승인 후 이용 가능합니다.
+                    </p>
+                  )}
                 </div>
 
                 {/* Name Input */}

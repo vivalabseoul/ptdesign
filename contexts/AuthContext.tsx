@@ -1,4 +1,6 @@
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import * as authApi from '../lib/api/auth';
+import { getAuthErrorMessage } from '../lib/api/errors';
 
 interface UserProfile {
   id: string;
@@ -8,7 +10,8 @@ interface UserProfile {
   subscriptionTier: 'free' | 'basic' | 'professional' | 'enterprise';
   freeAnalysisUsed: boolean;
   subscription_status?: 'active' | 'inactive' | 'cancelled';
-  subscription_plan?: 'free' | 'basic' | 'pro';
+  subscription_plan?: 'free' | 'basic' | 'pro' | 'enterprise';
+  approvalStatus?: 'pending' | 'approved' | 'rejected';
 }
 
 interface AuthResult {
@@ -30,30 +33,6 @@ interface AuthContextType {
   signOut: () => Promise<void>;
   signUp: (email: string, password: string, name: string, role: 'customer' | 'expert' | 'admin') => Promise<UserProfile & AuthResult>;
 }
-
-const LOCAL_USER_KEY = 'protouchdesign:authUser';
-const isBrowser = typeof window !== 'undefined';
-
-const persistUserToStorage = (profile: UserProfile) => {
-  if (!isBrowser) return;
-  localStorage.setItem(LOCAL_USER_KEY, JSON.stringify(profile));
-};
-
-const clearStoredUser = () => {
-  if (!isBrowser) return;
-  localStorage.removeItem(LOCAL_USER_KEY);
-};
-
-const loadStoredUser = (): UserProfile | null => {
-  if (!isBrowser) return null;
-  const raw = localStorage.getItem(LOCAL_USER_KEY);
-  if (!raw) return null;
-  try {
-    return JSON.parse(raw) as UserProfile;
-  } catch {
-    return null;
-  }
-};
 
 const AuthContext = createContext<AuthContextType>({
   user: null,
@@ -81,13 +60,26 @@ export function AuthProvider({ children, onOpenAuthModal }: AuthProviderProps) {
   const [user, setUser] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState(true);
 
-  // 초기 세션 체크 - 로컬 스토리지에서 복원
+  // 초기 세션 체크 - Supabase 세션에서 복원
   useEffect(() => {
     const initializeAuth = async () => {
       try {
-        const storedUser = loadStoredUser();
-        if (storedUser) {
-          setUser(storedUser);
+        const currentUser = await authApi.getCurrentUser();
+        if (currentUser) {
+          // Supabase users 테이블의 role을 UserProfile의 role 타입으로 매핑
+          const mappedUser: UserProfile = {
+            id: currentUser.id,
+            email: currentUser.email,
+            name: currentUser.email.split('@')[0], // 이름이 없으면 이메일에서 추출
+            role: currentUser.role === 'admin' ? 'admin' : 'customer',
+            subscriptionTier: currentUser.subscription_plan === 'pro' ? 'professional' : 
+                            currentUser.subscription_plan === 'basic' ? 'basic' : 
+                            currentUser.subscription_plan === 'enterprise' ? 'enterprise' : 'free',
+            freeAnalysisUsed: false,
+            subscription_status: currentUser.subscription_status,
+            subscription_plan: currentUser.subscription_plan,
+          };
+          setUser(mappedUser);
         }
       } catch (error) {
         console.error('인증 초기화 실패:', error);
@@ -99,55 +91,76 @@ export function AuthProvider({ children, onOpenAuthModal }: AuthProviderProps) {
     initializeAuth();
   }, []);
 
-  // 로그인 - 로컬 스토리지 기반
+  // 로그인 - Supabase API
   const login = async (email: string, password: string) => {
     try {
-      // TODO: 실제 인증 API 연동 필요
+      const apiUser = await authApi.signIn({ email, password });
+      
+      // Supabase users 테이블의 role을 UserProfile의 role 타입으로 매핑
       const profile: UserProfile = {
-        id: email,
-        email,
+        id: apiUser.id,
+        email: apiUser.email,
         name: email.split('@')[0],
-        role: 'customer',
-        subscriptionTier: 'free',
+        role: apiUser.role === 'admin' ? 'admin' : 'customer',
+        subscriptionTier: apiUser.subscription_plan === 'pro' ? 'professional' : 
+                        apiUser.subscription_plan === 'basic' ? 'basic' : 
+                        apiUser.subscription_plan === 'enterprise' ? 'enterprise' : 'free',
         freeAnalysisUsed: false,
+        subscription_status: apiUser.subscription_status,
+        subscription_plan: apiUser.subscription_plan,
       };
 
       setUser(profile);
-      persistUserToStorage(profile);
       return { ...profile, error: undefined };
     } catch (error) {
       console.error('로그인 실패:', error);
-      throw error;
+      const errorMessage = getAuthErrorMessage(error);
+      throw new Error(errorMessage);
     }
   };
 
-  // 회원가입 - 로컬 스토리지 기반
+  // 회원가입 - Supabase API
   const signup = async (email: string, password: string, name: string, role: 'customer' | 'expert' | 'admin') => {
     try {
-      // TODO: 실제 회원가입 API 연동 필요
-      const profile: UserProfile = {
-        id: email,
+      // Supabase에 회원가입 (role은 'admin' 또는 'user'로 매핑)
+      const apiUser = await authApi.signUp({
         email,
+        password,
+        name,
+        role: role === 'admin' ? 'admin' : 'user',
+      });
+
+      const profile: UserProfile = {
+        id: apiUser.id,
+        email: apiUser.email,
         name,
         role,
         subscriptionTier: 'free',
         freeAnalysisUsed: false,
+        // 전문가 회원가입은 승인 대기 상태로 설정
+        approvalStatus: role === 'expert' ? 'pending' : 'approved',
+        subscription_status: apiUser.subscription_status,
+        subscription_plan: apiUser.subscription_plan,
       };
 
       setUser(profile);
-      persistUserToStorage(profile);
-      
       return { ...profile, error: undefined };
     } catch (error) {
       console.error('회원가입 실패:', error);
-      throw error;
+      const errorMessage = getAuthErrorMessage(error);
+      throw new Error(errorMessage);
     }
   };
 
-  // 로그아웃
+  // 로그아웃 - Supabase API
   const logout = async () => {
-    setUser(null);
-    clearStoredUser();
+    try {
+      await authApi.signOut();
+      setUser(null);
+    } catch (error) {
+      console.error('로그아웃 실패:', error);
+      throw error;
+    }
   };
 
   const openAuthModal = (mode: 'login' | 'signup' = 'login') => {

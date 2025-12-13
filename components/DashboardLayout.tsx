@@ -12,6 +12,7 @@ import {
   ClipboardCheck,
   BarChart3,
   Eye,
+  Activity,
 } from "lucide-react";
 import { Footer } from "./Footer";
 
@@ -34,7 +35,8 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
       return [
         { icon: LayoutDashboard, label: "대시보드", path: "/admin/dashboard" },
         { icon: Sparkles, label: "지침서 메이커", path: "/admin/guideline-maker" },
-        { icon: Users, label: "회원 관리", path: "/admin/members" },
+        { icon: Users, label: "회원 등급 관리", path: "/admin/members" },
+        { icon: Activity, label: "회원 사용량", path: "/admin/member-usage" },
         { icon: FolderKanban, label: "프로젝트 관리", path: "/admin/projects" },
         { icon: Eye, label: "템플릿 미리보기", path: "/admin/pdf-preview" },
       ];
