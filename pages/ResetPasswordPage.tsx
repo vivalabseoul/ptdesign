@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Lock, CheckCircle, AlertCircle } from "lucide-react";
-import { supabase } from "../utils/supabase/client";
+// import { supabase } from "../utils/supabase/client"; // AWS 마이그레이션: Cognito로 대체 필요
 
 export function ResetPasswordPage() {
   const [password, setPassword] = useState("");
@@ -12,12 +12,12 @@ export function ResetPasswordPage() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Check if we have a valid session from the reset email
+    // AWS 마이그레이션: Cognito confirmPassword 구현 필요
+    // URL에서 verification code를 가져와서 Cognito confirmPassword 호출
     const checkSession = async () => {
-      const { data: { session } } = await supabase.auth.getSession();
-      if (!session) {
-        setError("유효하지 않은 링크입니다. 비밀번호 재설정을 다시 요청해주세요.");
-      }
+      // TODO: AWS Cognito 구현
+      // const params = new URLSearchParams(window.location.search);
+      // const code = params.get('code');
     };
     checkSession();
   }, []);
@@ -39,11 +39,13 @@ export function ResetPasswordPage() {
     setLoading(true);
 
     try {
-      const { error } = await supabase.auth.updateUser({
-        password: password,
-      });
-
-      if (error) throw error;
+      // AWS 마이그레이션: Cognito confirmPassword 구현 필요
+      // const params = new URLSearchParams(window.location.search);
+      // const code = params.get('code');
+      // const email = params.get('email');
+      // await CognitoAuth.confirmPassword(email, code, password);
+      
+      throw new Error("AWS Cognito 설정이 필요합니다. .env 파일을 확인하세요.");
 
       setSuccess(true);
       setTimeout(() => {

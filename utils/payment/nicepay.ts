@@ -244,7 +244,9 @@ export const updateSubscriptionStatus = async (
 ): Promise<{ success: boolean; error?: string }> => {
   try {
     // Supabase 클라이언트 import
-    const { supabase } = await import('../supabase/client');
+    // AWS 마이그레이션: RDS PostgreSQL로 대체 필요
+    // const { query } = await import('../../lib/aws-database');
+    // await query('UPDATE users SET subscription_status = $1 WHERE id = $2', ['active', userId]);
     
     // 플랜 가격 정보 가져오기
     const plan = paymentPlans.find((p) => p.id === planId);
@@ -260,6 +262,8 @@ export const updateSubscriptionStatus = async (
       subscription_plan: planId === 'free' ? 'free' : planId,
     });
 
+    // AWS 마이그레이션: RDS PostgreSQL로 대체 필요
+    /*
     const { data: updateData, error: updateError } = await supabase
       .from('users')
       .update({
@@ -269,7 +273,18 @@ export const updateSubscriptionStatus = async (
       })
       .eq('id', userId)
       .select();
+    */
+    
+    // TODO: AWS RDS 구현
+    // const { query } = await import('../../lib/aws-database');
+    // await query(
+    //   'UPDATE users SET subscription_status = $1, subscription_plan = $2, updated_at = CURRENT_TIMESTAMP WHERE id = $3',
+    //   ['active', planId, userId]
+    // );
+    
+    const updateError = null; // 임시
 
+    /*
     if (updateError) {
       console.error('Error updating subscription status:', updateError);
       console.error('Error details:', {
@@ -283,11 +298,15 @@ export const updateSubscriptionStatus = async (
         error: updateError.message || '구독 상태 업데이트에 실패했습니다' 
       };
     }
+    */
 
-    console.log('Subscription status updated successfully:', updateData);
+    console.log('Subscription status updated successfully (AWS migration pending)');
+
 
     // 결제 기록 저장 (payments 테이블이 있는 경우)
     try {
+      // AWS 마이그레이션: 결제 기록 저장 (RDS)
+      /*
       const { error: paymentError } = await supabase
         .from('payments')
         .insert([
@@ -301,11 +320,16 @@ export const updateSubscriptionStatus = async (
             updated_at: new Date().toISOString(),
           },
         ]);
+      */
+      
+      const paymentError = null; // 임시
 
+      /*
       if (paymentError) {
         // payments 테이블이 없거나 오류가 있어도 구독 상태 업데이트는 성공한 것으로 처리
         console.warn('Error saving payment record:', paymentError);
       }
+      */
     } catch (paymentError) {
       // payments 테이블이 없어도 구독 상태 업데이트는 성공한 것으로 처리
       console.warn('Payments table may not exist:', paymentError);

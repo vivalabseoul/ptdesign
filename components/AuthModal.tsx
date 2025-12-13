@@ -74,13 +74,8 @@ export function AuthModal({ isOpen, onClose, initialMode = "login" }: AuthModalP
     try {
       const profile = await signup(email, password, name, role);
       
-      if (profile.role === "admin") {
-        navigate("/admin/dashboard");
-      } else if (profile.role === "expert") {
-        navigate("/expert/dashboard");
-      } else {
-        navigate("/customer/dashboard");
-      }
+      // 회원가입 후 메인 페이지로 리다이렉트 (저장된 URL 복원을 위해)
+      navigate("/");
       onClose();
     } catch (err: any) {
       setError(err.message || "회원가입에 실패했습니다.");

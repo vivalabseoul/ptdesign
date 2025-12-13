@@ -32,6 +32,12 @@ export function Navbar() {
     <>
       {isAuthenticated ? (
         <>
+          {/* 사용자 이메일 표시 */}
+          {appUser?.email && (
+            <span className={`text-gray-300 text-sm ${isMobileMenu ? "mb-2" : "mr-2"}`}>
+              {appUser.email}
+            </span>
+          )}
           <Button
             onClick={() => {
               navigate("/dashboard");

@@ -7,9 +7,13 @@ import { Experts } from "../components/Experts";
 import { Pricing } from "../components/Pricing";
 import { Contact } from "../components/Contact";
 import { Footer } from "../components/Footer";
-import { projectId, publicAnonKey } from "../utils/supabase/info";
+// import { projectId, publicAnonKey } from "../utils/supabase/info"; // AWS 마이그레이션
 import { useAuth } from "../contexts/AuthContext";
-import { supabase } from "../utils/supabase/client";
+// import { supabase } from "../utils/supabase/client"; // AWS 마이그레이션
+
+// AWS 마이그레이션: 임시 변수 (삭제 예정)
+const projectId = 'temp';
+const publicAnonKey = 'temp';
 
 export function Home() {
   const [isAnalyzing, setIsAnalyzing] = useState(false);
@@ -134,6 +138,8 @@ export function Home() {
           if (user) {
             try {
           console.log("저장 시도 - user.id:", user.id);
+          // AWS 마이그레이션: RDS로 대체 필요
+          /*
           const { data: savedData, error: saveError } = await supabase
             .from("analyses")
                 .insert([
@@ -164,6 +170,8 @@ export function Home() {
           } else {
             console.log("분석 결과 저장 성공:", savedData);
           }
+          */
+          console.log('AWS 마이그레이션: 분석 결과 저장 기능은 AWS RDS 설정 후 구현됩니다.');
         } catch (error) {
           console.error("Error saving analysis:", error);
           alert(

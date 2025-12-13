@@ -1,0 +1,585 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>PDF 템플릿 미리보기</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;600;700;800&display=swap');
+    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: 'Noto Sans KR', sans-serif;
+      color: #111111;
+      background: #f3f4f6;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      padding: 40px 20px;
+    }
+
+    .preview-container {
+      max-width: 210mm;
+      margin: 0 auto;
+      background: white;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
+    
+    .page-1, .page-2 {
+      height: auto;
+      min-height: 100%;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      page-break-after: always;
+    }
+
+    .page-2:last-child {
+      page-break-after: auto;
+    }
+    
+    h1 {
+      font-size: 28px;
+      font-weight: 800;
+      margin-bottom: 8px;
+      color: #111111;
+    }
+    
+    h2 {
+      font-size: 18px;
+      font-weight: 700;
+      color: #111111;
+      padding-bottom: 6px;
+      width: 100%;
+    }
+    
+    .header-section {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid #E5E7EB;
+    }
+
+    .header-left {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .logo {
+      font-size: 18px;
+      font-weight: 800;
+      margin-bottom: 4px;
+      color: #111111;
+    }
+
+    .report-meta {
+      font-size: 11px;
+      color: #6B7280;
+    }
+    
+    .score-box {
+      display: flex;
+      align-items: center;
+    }
+    
+    .score-val {
+      font-size: 32px;
+      font-weight: 800;
+      color: #111111;
+    }
+
+    .score-grade {
+      font-size: 32px;
+      font-weight: 800;
+      color: #84A98C;
+      padding-left: 12px;
+    }
+    
+    .section {
+      margin-bottom: 25px;
+    }
+
+    .section-margin {
+      margin-top: 40px;
+    }
+
+    .section-desc {
+      font-size: 11px;
+      color: #6B7280;
+      margin-bottom: 12px;
+      line-height: 1.6;
+    }
+
+    /* 상단 차트 & 지표 레이아웃 (1열: 좌 차트, 우 지표) */
+    .top-chart-metrics {
+      display: flex;
+      gap: 10px;
+      align-items: stretch;
+      margin-bottom: 5px;
+    }
+
+    .left-chart {
+      flex: 1;
+      padding: 5px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100px;
+      max-width: 350px;
+      border: 1px solid #E5E7EB;
+      border-radius: 8px;
+    }
+
+    .right-metrics {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* 핵심 지표 (2열 그리드) - 우측 배치용 */
+    .metrics-grid-2col {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+      height: 100%;
+    }
+    
+    .metric-card {
+      background: #ffffff;
+      border: 1px solid #E5E7EB;
+      border-radius: 8px;
+      padding: 10px;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+    
+    .metric-label {
+      font-size: 13px;
+      color: #6B7280;
+      margin-bottom: 6px;
+      font-weight: 600;
+      text-align: center;
+    }
+    
+    .metric-value {
+      font-size: 26px;
+      font-weight: 800;
+      color: #111111;
+      margin-bottom: 4px;
+      text-align: center;
+    }
+    
+    .metric-target {
+      font-size: 14px;
+      color: #9CA3AF;
+      text-align: center;
+    }
+    
+    .chart-image {
+      max-height: 100%;
+      max-width: 100%;
+      object-fit: contain;
+    }
+
+    /* 평가 기준 요약 (3열) */
+    .criteria-grid-3col {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+    }
+
+    .criteria-item {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      padding: 10px 10px;
+      border: 1px solid #E5E7EB;
+      border-radius: 8px;
+      background: #fff;
+    }
+
+    .criteria-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      width: 100%;
+      margin-bottom: 4px;
+    }
+
+    .criteria-desc {
+      font-size: 10px;
+      color: #4B5563;
+      margin-bottom: 6px;
+    }
+
+    .criteria-weight {
+      font-size: 12px;
+      color: #9CA3AF;
+    }
+
+    .criteria-name {
+      font-size: 13px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+    }
+
+    .criteria-val {
+      font-size: 24px;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+    }
+
+    /* 긴급 개선 필요 항목 (Top 3 - 3열) */
+    .top3-grid-3col {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+    }
+
+    /* 개선 항목 (2열) */
+    .improvement-grid-2col {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+    }
+    
+    .improvement-card {
+      border: 1px solid #E5E7EB;
+      padding: 14px;
+      border-radius: 4px;
+      background: #ffffff;
+      height: 100%;
+    }
+    
+    .improvement-header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+
+    .improvement-title {
+      font-weight: 700;
+      font-size: 13px;
+      color: #111111;
+      display: flex;
+    }
+    
+    .improvement-desc {
+      font-size: 11px;
+      color: #4B5563;
+      margin-bottom: 4px;
+    }
+
+    .improvement-meta {
+      font-size: 10px; 
+      color: #9CA3AF; 
+      margin-top: 6px;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    /* SEO 분석 요약 (4열) */
+    .seo-grid-4col {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+    }
+
+    .seo-item {
+      background: #F9FAFB;
+      border: 1px solid #E5E7EB;
+      border-radius: 6px;
+      padding: 8px 12px;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+    }
+
+    .seo-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      width: 100%;
+      margin-bottom: 4px;
+    }
+
+    .seo-desc {
+      font-size: 9px;
+      color: #6B7280;
+      line-height: 1.4;
+    }
+    
+    .seo-name {
+      font-weight: 600;
+      font-size: 11px;
+    }
+    
+    .seo-score {
+      font-size: 18px;
+      font-weight: 800;
+    }
+  </style>
+</head>
+<body>
+  <div class="preview-container">
+    <!-- 1페이지 -->
+    <div class="page-1">
+      <!-- 헤더 -->
+      <div class="header-section">
+        <div class="header-left">
+          <div class="logo">ProTouchDesign</div>
+          <h1>UX/UI 분석 리포트</h1>
+          <div class="report-meta">
+            <span>https://example.com</span> <span>2025-12-13</span>
+          </div>
+        </div>
+        <div class="score-box">
+          <div class="score-val">85점</div>
+          <div class="score-grade">Grade B</div>
+        </div>
+      </div>
+      
+      <!-- 상단: 차트(좌) + 핵심지표(우) -->
+      <div class="section">
+        <h2>종합 분석 요약</h2>
+        <p class="section-desc">웹사이트의 주요 성과 지표와 영역별 점수 분포를 한눈에 확인할 수 있습니다. 현재 상태와 목표치를 비교하여 개선 방향을 파악하세요.</p>
+        <div class="top-chart-metrics">
+          <!-- 좌측: 레이더 차트 -->
+          <div class="left-chart">
+            <p style="color:#9CA3AF">차트 영역</p>
+          </div>
+          
+          <!-- 우측: 핵심 지표 (2열 그리드) -->
+          <div class="right-metrics">
+            <div class="metrics-grid-2col">
+              <div class="metric-card">
+                <div class="metric-label">이탈률</div>
+                <div class="metric-value">45%</div>
+                <div class="metric-target">목표: 30%</div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-label">평균 체류 시간</div>
+                <div class="metric-value">2분 30초</div>
+                <div class="metric-target">목표: 3분 30초</div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-label">페이지/세션</div>
+                <div class="metric-value">3.2</div>
+                <div class="metric-target">목표: 4.5</div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-label">전환율</div>
+                <div class="metric-value">2.1%</div>
+                <div class="metric-target">목표: 3.5%</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 긴급 개선 필요 항목 (Top 3 - 3열) -->
+      <div class="section">
+        <h2>긴급 개선 필요 항목 (Top 3)</h2>
+        <p class="section-desc">우선순위가 가장 높은 개선 항목입니다. 현재 상태와 목표 상태를 확인하고 즉시 개선 작업을 시작하세요.</p>
+        <div class="top3-grid-3col">
+          <div class="improvement-card" >
+            <div class="improvement-header">
+              <span style="color: #DC2626; font-weight: 700; font-size: 12px;">[치명적]</span>
+            </div>
+            <div class="improvement-title" style="margin-bottom: 8px;">모바일 반응형 디자인 개선</div>
+            <div class="improvement-desc">
+              <span style="color: #DC2626;">현: 모바일 레이아웃 깨짐</span><br/>
+              <span style="color: #84A98C;">목: 완벽한 반응형 지원</span>
+            </div>
+          </div>
+          <div class="improvement-card">
+            <div class="improvement-header">
+              <span style="color: #EA580C; font-weight: 700; font-size: 12px;">[높음]</span>
+            </div>
+            <div class="improvement-title" style="margin-bottom: 8px;">페이지 로딩 속도 최적화</div>
+            <div class="improvement-desc">
+              <span style="color: #DC2626;">현: 5.2초</span><br/>
+              <span style="color: #84A98C;">목: 2초 이하</span>
+            </div>
+          </div>
+          <div class="improvement-card">
+            <div class="improvement-header">
+              <span style="color: #F59E0B; font-weight: 700; font-size: 12px;">[중간]</span>
+            </div>
+            <div class="improvement-title" style="margin-bottom: 8px;">CTA 버튼 가시성 향상</div>
+            <div class="improvement-desc">
+              <span style="color: #DC2626;">현: 낮은 클릭률</span><br/>
+              <span style="color: #84A98C;">목: 명확한 시각적 강조</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 평가 기준 요약 (3열) -->
+      <div class="section">
+        <h2>평가 기준 요약</h2>
+        <p class="section-desc">웹사이트의 주요 평가 영역별 점수입니다. 각 영역은 사용자 경험, 접근성, 성능 등을 종합적으로 평가합니다.</p>
+        <div class="criteria-grid-3col">
+          <div class="criteria-item">
+            <div class="criteria-header">
+              <span class="criteria-name">첫인상</span>
+              <span class="criteria-val" style="color: #84A98C;">85</span>
+            </div>
+            <div class="criteria-desc">웹사이트의 첫인상은 사용자에게 중요한 영향을 하며, 그런 점에서 잘 설계되어 있습니다.</div>
+            <div class="criteria-weight">가중치: 20%</div>
+          </div>
+          <div class="criteria-item">
+            <div class="criteria-header">
+              <span class="criteria-name">이탈 방지</span>
+              <span class="criteria-val" style="color: #F59E0B;">65</span>
+            </div>
+            <div class="criteria-desc">사용자 이탈을 방지하기 위한 여러 요소가 있지만 몇 가지 문제점이 존재함.</div>
+            <div class="criteria-weight">가중치: 30%</div>
+          </div>
+          <div class="criteria-item">
+            <div class="criteria-header">
+              <span class="criteria-name">모바일 경험</span>
+              <span class="criteria-val" style="color: #84A98C;">90</span>
+            </div>
+            <div class="criteria-desc">모바일 디바이스에서의 경험이 매우 우수하며, 사용자 친화적임.</div>
+            <div class="criteria-weight">가중치: 20%</div>
+          </div>
+          <div class="criteria-item">
+            <div class="criteria-header">
+              <span class="criteria-name">체류 유도</span>
+              <span class="criteria-val" style="color: #EE6C4D;">45</span>
+            </div>
+            <div class="criteria-desc">사용자가 머무르고 싶게 만드는 요소가 부족함.</div>
+            <div class="criteria-weight">가중치: 10%</div>
+          </div>
+          <div class="criteria-item">
+            <div class="criteria-header">
+              <span class="criteria-name">접근성</span>
+              <span class="criteria-val" style="color: #F59E0B;">70</span>
+            </div>
+            <div class="criteria-desc">접근성 측면에서 기본적인 요소는 최적화되어 있으나 개선의 여지가 있음.</div>
+            <div class="criteria-weight">가중치: 10%</div>
+          </div>
+          <div class="criteria-item">
+            <div class="criteria-header">
+              <span class="criteria-name">SEO</span>
+              <span class="criteria-val" style="color: #EE6C4D;">55</span>
+            </div>
+            <div class="criteria-desc">SEO 최적화가 부족하여 검색 엔진 유입이 낮음.</div>
+            <div class="criteria-weight">가중치: 10%</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- 2페이지 -->
+    <div class="page-2">
+      <!-- SEO 분석 요약 (4열) -->
+      <div class="section section-margin">
+        <h2>SEO 분석 요약</h2>
+        <p class="section-desc">검색 엔진 최적화(SEO) 관련 세부 항목별 점수입니다. 메타 태그, 구조화 데이터, 페이지 속도 등을 평가합니다.</p>
+        <div class="seo-grid-4col">
+          <div class="seo-item">
+            <div class="seo-header">
+              <span class="seo-name">메타 태그</span>
+              <span class="seo-score" style="color: #F59E0B">65</span>
+            </div>
+            <div class="seo-desc">타이틀과 설명 태그가 있으나 최적화 필요</div>
+          </div>
+          <div class="seo-item">
+            <div class="seo-header">
+              <span class="seo-name">구조화 데이터</span>
+              <span class="seo-score" style="color: #EE6C4D">40</span>
+            </div>
+            <div class="seo-desc">Schema.org 마크업 미적용</div>
+          </div>
+          <div class="seo-item">
+            <div class="seo-header">
+              <span class="seo-name">페이지 속도</span>
+              <span class="seo-score" style="color: #F59E0B">60</span>
+            </div>
+            <div class="seo-desc">로딩 시간 개선 필요</div>
+          </div>
+          <div class="seo-item">
+            <div class="seo-header">
+              <span class="seo-name">모바일 친화성</span>
+              <span class="seo-score" style="color: #84A98C">85</span>
+            </div>
+            <div class="seo-desc">모바일 최적화 양호</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 상세 개선 항목 (2열) -->
+      <div class="section">
+        <h2>상세 개선 항목</h2>
+        <p class="section-desc">각 영역별 구체적인 개선 사항과 실행 방안입니다.</p>
+        <div class="improvement-grid-2col">
+          <div class="improvement-card" >
+            <div class="improvement-header">
+              <span style="color: #DC2626; font-weight: 700; font-size: 12px;">[치명적]</span>
+            </div>
+            <div class="improvement-title">모바일 반응형 디자인</div>
+            <div class="improvement-desc">
+              모바일 환경에서 레이아웃이 깨지는 문제가 발생하고 있습니다. 미디어 쿼리를 적용하여 다양한 화면 크기에 대응해야 합니다.
+            </div>
+            <div class="improvement-meta">
+              <span>영향도: 높음</span>
+              <span>예상 소요: 2주</span>
+            </div>
+          </div>
+          <div class="improvement-card">
+            <div class="improvement-header">
+              <span style="color: #EA580C; font-weight: 700; font-size: 12px;">[높음]</span>
+            </div>
+            <div class="improvement-title">페이지 로딩 속도</div>
+            <div class="improvement-desc">
+              이미지 최적화와 코드 번들링을 통해 초기 로딩 시간을 단축해야 합니다. 현재 5.2초에서 2초 이하로 개선 목표.
+            </div>
+            <div class="improvement-meta">
+              <span>영향도: 높음</span>
+              <span>예상 소요: 1주</span>
+            </div>
+          </div>
+          <div class="improvement-card">
+            <div class="improvement-header">
+              <span style="color: #F59E0B; font-weight: 700; font-size: 12px;">[중간]</span>
+            </div>
+            <div class="improvement-title">CTA 버튼 개선</div>
+            <div class="improvement-desc">
+              주요 행동 유도 버튼의 가시성이 낮습니다. 색상 대비를 높이고 크기를 조정하여 클릭률을 향상시켜야 합니다.
+            </div>
+            <div class="improvement-meta">
+              <span>영향도: 중간</span>
+              <span>예상 소요: 3일</span>
+            </div>
+          </div>
+          <div class="improvement-card">
+            <div class="improvement-header">
+              <span style="color: #6B7280; font-weight: 700; font-size: 12px;">[낮음]</span>
+            </div>
+            <div class="improvement-title">폰트 최적화</div>
+            <div class="improvement-desc">
+              웹폰트 로딩 방식을 개선하여 FOUT(Flash of Unstyled Text) 현상을 방지하고 렌더링 성능을 향상시킵니다.
+            </div>
+            <div class="improvement-meta">
+              <span>영향도: 낮음</span>
+              <span>예상 소요: 2일</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

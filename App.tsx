@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
+import { Routes, Route, Navigate } from "react-router-dom";
 import { useState } from "react";
 import { AuthProvider, useAuth } from "./contexts/AuthContext";
 import { AuthModal } from "./components/AuthModal";
@@ -39,16 +39,14 @@ function App() {
 
   return (
     <AuthProvider onOpenAuthModal={openAuthModal}>
-      <Router>
-        <AppRoutes />
-        
-        {/* Auth Modal */}
-        <AuthModal
-          isOpen={authModalOpen}
-          onClose={() => setAuthModalOpen(false)}
-          initialMode={authModalMode}
-        />
-      </Router>
+      <AppRoutes />
+
+      {/* Auth Modal */}
+      <AuthModal
+        isOpen={authModalOpen}
+        onClose={() => setAuthModalOpen(false)}
+        initialMode={authModalMode}
+      />
     </AuthProvider>
   );
 }

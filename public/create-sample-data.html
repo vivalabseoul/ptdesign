@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>샘플 데이터 생성 - Pro Touch Design</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .container {
+      background: white;
+      border-radius: 20px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+      max-width: 600px;
+      width: 100%;
+      padding: 40px;
+    }
+
+    h1 {
+      color: #333;
+      margin-bottom: 10px;
+      font-size: 28px;
+    }
+
+    .subtitle {
+      color: #666;
+      margin-bottom: 30px;
+      font-size: 14px;
+    }
+
+    .account-card {
+      background: #f7f9fc;
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 20px;
+      border-left: 4px solid #667eea;
+    }
+
+    .account-card h3 {
+      color: #333;
+      margin-bottom: 15px;
+      font-size: 18px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .account-info {
+      display: grid;
+      gap: 10px;
+    }
+
+    .info-row {
+      display: flex;
+      gap: 10px;
+    }
+
+    .info-label {
+      color: #666;
+      font-weight: 600;
+      min-width: 80px;
+    }
+
+    .info-value {
+      color: #333;
+      font-family: 'Courier New', monospace;
+      background: white;
+      padding: 4px 12px;
+      border-radius: 6px;
+      flex: 1;
+    }
+
+    .button {
+      width: 100%;
+      padding: 16px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      border: none;
+      border-radius: 12px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.2s;
+      margin-top: 20px;
+    }
+
+    .button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
+    }
+
+    .button:active {
+      transform: translateY(0);
+    }
+
+    .button:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    .success-message {
+      background: #10b981;
+      color: white;
+      padding: 16px;
+      border-radius: 12px;
+      margin-top: 20px;
+      display: none;
+      animation: slideIn 0.3s ease;
+    }
+
+    .success-message.show {
+      display: block;
+    }
+
+    @keyframes slideIn {
+      from {
+        opacity: 0;
+        transform: translateY(-10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 15px;
+      margin-top: 20px;
+    }
+
+    .stat-card {
+      text-align: center;
+      padding: 15px;
+      background: #f7f9fc;
+      border-radius: 10px;
+    }
+
+    .stat-number {
+      font-size: 28px;
+      font-weight: 700;
+      color: #667eea;
+      display: block;
+    }
+
+    .stat-label {
+      font-size: 12px;
+      color: #666;
+      margin-top: 5px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🎯 시연용 샘플 데이터 생성</h1>
+    <p class="subtitle">Pro Touch Design 시연을 위한 계정과 분석 데이터를 생성합니다</p>
+
+    <div class="account-card">
+      <h3>👤 일반 사용자 계정</h3>
+      <div class="account-info">
+        <div class="info-row">
+          <span class="info-label">이메일</span>
+          <span class="info-value">demo@protouchdesign.com</span>
+        </div>
+        <div class="info-row">
+          <span class="info-label">비밀번호</span>
+          <span class="info-value">demo1234</span>
+        </div>
+        <div class="info-row">
+          <span class="info-label">플랜</span>
+          <span class="info-value">Pro (프로 플랜)</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="account-card">
+      <h3>🔧 관리자 계정</h3>
+      <div class="account-info">
+        <div class="info-row">
+          <span class="info-label">이메일</span>
+          <span class="info-value">admin@protouchdesign.com</span>
+        </div>
+        <div class="info-row">
+          <span class="info-label">비밀번호</span>
+          <span class="info-value">admin1234</span>
+        </div>
+        <div class="info-row">
+          <span class="info-label">플랜</span>
+          <span class="info-value">Enterprise (엔터프라이즈)</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="stats">
+      <div class="stat-card">
+        <span class="stat-number">2</span>
+        <span class="stat-label">사용자</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-number">3</span>
+        <span class="stat-label">프로젝트</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-number">3</span>
+        <span class="stat-label">분석 리포트</span>
+      </div>
+    </div>
+
+    <button class="button" onclick="generateSampleData()">
+      샘플 데이터 생성하기
+    </button>
+
+    <div class="success-message" id="successMessage">
+      ✅ 샘플 데이터가 생성되었습니다!<br>
+      메인 페이지로 이동하여 위 계정으로 로그인하세요.
+    </div>
+  </div>
+
+  <script>
+    function generateSampleData() {
+      const button = document.querySelector('.button');
+      button.disabled = true;
+      button.textContent = '생성 중...';
+
+      // 샘플 사용자 데이터
+      const sampleUsers = [
+        {
+          id: "demo-user-001",
+          email: "demo@protouchdesign.com",
+          password: "demo1234",
+          name: "김데모",
+          role: "customer",
+          subscriptionTier: "pro",
+          freeAnalysisUsed: false,
+          subscription_status: "active",
+          subscription_plan: "pro",
+        },
+        {
+          id: "admin-user-001",
+          email: "admin@protouchdesign.com",
+          password: "admin1234",
+          name: "관리자",
+          role: "admin",
+          subscriptionTier: "enterprise",
+          freeAnalysisUsed: false,
+          subscription_status: "active",
+          subscription_plan: "enterprise",
+        },
+      ];
+
+      // 샘플 프로젝트 데이터
+      const sampleProjects = [
+        {
+          id: "demo-proj-001",
+          user_id: "demo-user-001",
+          url: "https://www.samsung.com",
+          status: "completed",
+          created_at: new Date("2024-12-01").toISOString(),
+          updated_at: new Date("2024-12-01").toISOString(),
+        },
+        {
+          id: "demo-proj-002",
+          user_id: "demo-user-001",
+          url: "https://www.naver.com",
+          status: "completed",
+          created_at: new Date("2024-12-05").toISOString(),
+          updated_at: new Date("2024-12-05").toISOString(),
+        },
+        {
+          id: "demo-proj-003",
+          user_id: "demo-user-001",
+          url: "https://www.coupang.com",
+          status: "completed",
+          created_at: new Date("2024-12-07").toISOString(),
+          updated_at: new Date("2024-12-07").toISOString(),
+        },
+      ];
+
+      // 샘플 리포트 데이터 (축약 버전)
+      const sampleReports = {
+        "demo-proj-001": {
+          totalScore: 78,
+          evaluationCriteria: [
+            { category: "첫인상", score: 85, weight: 25, description: "사이트의 첫인상과 로딩 속도를 평가합니다", methodology: "LCP, FID, CLS 등 Core Web Vitals 측정", subcriteria: [] },
+            { category: "이탈 방지", score: 72, weight: 20, description: "사용자의 이탈을 방지하는 요소를 평가합니다", methodology: "CTA 배치, 네비게이션 구조 분석", subcriteria: [] },
+            { category: "모바일 경험", score: 75, weight: 20, description: "모바일 환경에서의 사용성을 평가합니다", methodology: "반응형 디자인, 터치 인터랙션 분석", subcriteria: [] },
+            { category: "체류 유도", score: 80, weight: 15, description: "사용자의 체류 시간을 늘리는 요소를 평가합니다", methodology: "콘텐츠 품질, 인게이지먼트 요소 분석", subcriteria: [] },
+            { category: "접근성", score: 70, weight: 10, description: "웹 접근성 준수 여부를 평가합니다", methodology: "WCAG 2.1 기준 자동화 테스트", subcriteria: [] },
+            { category: "SEO", score: 82, weight: 10, description: "검색 엔진 최적화 수준을 평가합니다", methodology: "메타 태그, 구조화 데이터 분석", subcriteria: [] },
+          ],
+          improvements: [
+            {
+              id: "imp-001",
+              category: "첫인상",
+              title: "히어로 섹션 이미지 최적화",
+              priority: "high",
+              currentState: "3.2초 로딩 시간, 압축되지 않은 고해상도 이미지 사용",
+              targetState: "1.5초 이내 로딩, WebP 포맷 + Lazy Loading 적용",
+              impact: "페이지 로딩 속도 50% 개선, 첫인상 점수 +15점 예상",
+              effort: "Easy",
+              status: "warning",
+              impactOnRetention: "방문자의 25%가 3초 이내 이탈 → 12%로 감소",
+              impactOnBounceRate: "이탈률 53% → 40% 예상",
+            },
+            {
+              id: "imp-002",
+              category: "이탈 방지",
+              title: "주요 CTA 버튼 가시성 개선",
+              priority: "critical",
+              currentState: "메인 CTA가 스크롤 하단에 위치, 클릭률 2.3%",
+              targetState: "Above the fold 영역에 명확한 CTA 배치, 대비 강화",
+              impact: "전환율 2.3% → 5.8%로 250% 증가 예상",
+              effort: "Easy",
+              status: "fail",
+              impactOnRetention: "구매/문의 전환이 명확해져 재방문율 증가",
+              impactOnBounceRate: "명확한 행동 유도로 이탈률 15% 감소",
+            },
+          ],
+          currentMetrics: {
+            bounceRate: "53%",
+            avgSessionTime: "1분 48초",
+            pagesPerSession: "1.8페이지",
+            conversionRate: "2.3%",
+            mobileBounceRate: "65%",
+          },
+          industryBenchmark: {
+            bounceRate: "40-50%",
+            avgSessionTime: "2분 30초",
+            pagesPerSession: "3.2페이지",
+            conversionRate: "3.5%",
+          },
+          targetMetrics: {
+            bounceRate: "35-40%",
+            avgSessionTime: "4분 15초",
+            pagesPerSession: "4.5페이지",
+            conversionRate: "5.8%",
+          },
+        },
+      };
+
+      try {
+        // 로컬스토리지에 저장
+        localStorage.setItem("protouchdesign:customUsers", JSON.stringify(sampleUsers));
+        localStorage.setItem("protouchdesign:mockProjects", JSON.stringify(sampleProjects));
+        localStorage.setItem("protouchdesign:mockReports", JSON.stringify(sampleReports));
+
+        // 성공 메시지 표시
+        setTimeout(() => {
+          button.textContent = '완료!';
+          document.getElementById('successMessage').classList.add('show');
+
+          // 3초 후 메인 페이지로 리다이렉트
+          setTimeout(() => {
+            window.location.href = '/';
+          }, 2000);
+        }, 500);
+
+      } catch (error) {
+        console.error('샘플 데이터 생성 실패:', error);
+        button.textContent = '생성 실패';
+        alert('샘플 데이터 생성에 실패했습니다. 콘솔을 확인하세요.');
+      }
+    }
+  </script>
+</body>
+</html>

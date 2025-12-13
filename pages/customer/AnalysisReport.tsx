@@ -158,9 +158,9 @@ export function AnalysisReport() {
       case "critical":
         return "#ce0000ff";
       case "high":
-        return "#2F2F2F";
+        return "#111111";
       case "medium":
-        return "#666666";
+        return "#84A98C";
       case "low":
         return "#A0A0A0";
       default:
@@ -513,7 +513,7 @@ export function AnalysisReport() {
               <div id="overview-content" className="space-y-6 lg:space-y-8">
                 {/* 1. Top Section: Score & Radar & Key Metrics */}
                 <div
-                  className="grid grid-cols-1 lg:grid-cols-9 gap-6"
+                  className="grid grid-cols-1 lg:grid-cols-10 gap-6"
                   style={{ pageBreakInside: "avoid" }}
                 >
                   {/* 종합 분석 결과 - 2칸 */}
@@ -591,8 +591,8 @@ export function AnalysisReport() {
                     </div>
                   </div>
 
-                  {/* 핵심 지표 요약 - 4칸 */}
-                  <div className="lg:col-span-4 card-base card-padding flex flex-col">
+                  {/* 핵심 지표 요약 - 5칸 */}
+                  <div className="lg:col-span-5 card-base card-padding flex flex-col">
                     <h3
                       className="text-lg font-bold mb-6 text-center w-full"
                       style={{ color: "var(--primary)" }}
@@ -600,7 +600,7 @@ export function AnalysisReport() {
                       핵심 지표 요약
                     </h3>
                     <div className="flex-1 grid grid-cols-2 gap-4 items-center">
-                      <div className="p-5 rounded-xl bg-gray-50 text-center h-full flex flex-col justify-center">
+                      <div className="py-2.5 px-5 rounded-xl bg-gray-50 text-center h-full flex flex-col justify-center">
                         <div className="text-base text-gray-500 mb-2">
                           이탈률
                         </div>
@@ -611,7 +611,7 @@ export function AnalysisReport() {
                           목표: {report.targetMetrics?.bounceRate || '-'}
                         </div>
                       </div>
-                      <div className="p-5 rounded-xl bg-gray-50 text-center h-full flex flex-col justify-center">
+                      <div className="py-2.5 px-5 rounded-xl bg-gray-50 text-center h-full flex flex-col justify-center">
                         <div className="text-base text-gray-500 mb-2">
                           평균 체류 시간
                         </div>
@@ -622,7 +622,7 @@ export function AnalysisReport() {
                           목표: {report.targetMetrics?.avgSessionTime || '-'}
                         </div>
                       </div>
-                      <div className="p-5 rounded-xl bg-gray-50 text-center h-full flex flex-col justify-center">
+                      <div className="py-2.5 px-5 rounded-xl bg-gray-50 text-center h-full flex flex-col justify-center">
                         <div className="text-base text-gray-500 mb-2">
                           페이지/세션
                         </div>
@@ -633,7 +633,7 @@ export function AnalysisReport() {
                           목표: {report.targetMetrics?.pagesPerSession || '-'}
                         </div>
                       </div>
-                      <div className="p-5 rounded-xl bg-gray-50 text-center h-full flex flex-col justify-center">
+                      <div className="py-2.5 px-5 rounded-xl bg-gray-50 text-center h-full flex flex-col justify-center">
                         <div className="text-base text-gray-500 mb-2">
                           전환율
                         </div>
@@ -1133,7 +1133,10 @@ export function AnalysisReport() {
                             >
                               {getPriorityLabel(item.priority)}
                             </span>
-                            <span className="text-base text-gray-500 bg-gray-100 px-2 py-1 rounded">
+                            <span className="text-base text-gray-700 bg-gray-100 px-2 py-1 rounded font-medium">
+                              난이도: {item.effort}
+                            </span>
+                            <span className="text-base text-gray-500 bg-gray-50 px-2 py-1 rounded">
                               {item.category}
                             </span>
                           </div>
@@ -1147,24 +1150,6 @@ export function AnalysisReport() {
                         </div>
 
                         <div className="mt-auto space-y-3">
-                          <div className="flex flex-row gap-2">
-                            <div className="flex-1 bg-gray-50 p-2 rounded-lg text-center">
-                              <div className="text-base text-gray-500 mb-1">
-                                영향도
-                              </div>
-                              <div className="font-bold text-xl">
-                                {item.impact}
-                              </div>
-                            </div>
-                            <div className="flex-1 bg-gray-50 p-2 rounded-lg text-center">
-                              <div className="text-base text-gray-500 mb-1">
-                                난이도
-                              </div>
-                              <div className="font-bold text-xl">
-                                {item.effort}
-                              </div>
-                            </div>
-                          </div>
 
                           <div className="grid grid-cols-1 gap-2 bg-gray-50 p-3 rounded-xl">
                             <div>
@@ -1283,7 +1268,7 @@ export function AnalysisReport() {
                         return (
                           <div
                             key={improvement.id}
-                            className="card-base overflow-hidden"
+                            className="card-base overflow-hidden bg-white"
                             style={{}}
                           >
                             <div className="card-padding">

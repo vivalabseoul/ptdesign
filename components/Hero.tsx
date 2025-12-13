@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { ArrowRight, Sparkles, Search } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
@@ -14,6 +14,16 @@ export function Hero({ onAnalyze, isAnalyzing, isAuthenticated, onNavigateToDash
   const { openAuthModal, user } = useAuth();
   const navigate = useNavigate();
   const [url, setUrl] = useState("");
+
+  // 페이지 로드 시 저장된 URL 복원 (자동 실행 X)
+  useEffect(() => {
+    const savedUrl = sessionStorage.getItem("pending_analysis_url");
+    if (savedUrl) {
+      setUrl(savedUrl);
+      // URL 복원 후 sessionStorage에서 제거
+      sessionStorage.removeItem("pending_analysis_url");
+    }
+  }, []);
 
   const handleAnalyze = () => {
     if (url) {

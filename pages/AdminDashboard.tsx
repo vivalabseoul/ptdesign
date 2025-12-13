@@ -4,8 +4,17 @@ import { Button } from '../components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '../components/ui/card';
 import { Badge } from '../components/ui/badge';
 import { useAuth } from '../contexts/AuthContext';
-import { supabase, AnalysisRecord } from '../utils/supabase/client';
+// import { supabase, AnalysisRecord } from '../utils/supabase/client'; // AWS 마이그레이션
 import type { AnalysisResult } from '../components/Results';
+
+// AWS 마이그레이션: 임시 타입 정의
+interface AnalysisRecord {
+  id: string;
+  user_id: string;
+  url: string;
+  created_at: string;
+  [key: string]: any;
+}
 
 export function AdminDashboard() {
   const { user, signOut } = useAuth();
@@ -22,6 +31,8 @@ export function AdminDashboard() {
   const loadAllAnalyses = async () => {
     try {
       // 관리자는 모든 분석 기록을 볼 수 있음
+      // AWS 마이그레이션: RDS로 대체 필요
+      /*
       const { data, error } = await supabase
         .from('analyses')
         .select('*')
@@ -32,6 +43,9 @@ export function AdminDashboard() {
       } else {
         setAnalyses(data || []);
       }
+      */
+      console.log('AWS 마이그레이션: 분석 기록 로드 기능은 AWS RDS 설정 후 구현됩니다.');
+      setAnalyses([]);
     } catch (error) {
       console.error('Error loading analyses:', error);
     } finally {

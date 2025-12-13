@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../contexts/AuthContext";
-import { analyzeWebsite } from "../../lib/openai";
+import { analyzeWebsite } from "../../lib/gemini";
 import { Plus, Search, BarChart3, Clock, CheckCircle, TrendingUp, Trash2, ExternalLink } from "lucide-react";
 import {
   getUserAnalyses,
@@ -34,6 +34,7 @@ export function CustomerDashboard() {
   const [loading, setLoading] = useState(true);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [analysisComplete, setAnalysisComplete] = useState(false);
+  const [completedProjectId, setCompletedProjectId] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
 
 
@@ -140,12 +141,9 @@ export function CustomerDashboard() {
       // 4. 완료 처리
       await updateProjectStatus(project.id, 'completed');
 
-      // 5. 완료 상태 업데이트 (AnalysisLoading에 알림)
+      // 5. 완료 상태 업데이트 및 프로젝트 ID 저장
+      setCompletedProjectId(project.id);
       setAnalysisComplete(true);
-
-      // 6. 페이지 이동을 위한 데이터 저장 (onComplete에서 사용)
-      // navigate는 AnalysisLoading의 onComplete 콜백에서 처리
-      return project.id;
     } catch (error: any) {
       console.error("분석 요청 실패:", error);
       setError(error.message || "알 수 없는 오류가 발생했습니다.");
@@ -173,17 +171,15 @@ export function CustomerDashboard() {
       setNewUrl("");
       setIsAnalyzing(false);
       setAnalysisComplete(false);
-      loadAnalyses(); // 목록 새로고침
       
-      // 가장 최근에 생성된 프로젝트로 이동해야 함
-      // 여기서는 목록을 다시 불러와서 가장 최신 항목으로 이동하거나,
-      // performAnalysis에서 저장한 ID를 state로 관리해서 이동해야 함.
-      // 편의상 목록 재로딩 후 처리
-      getUserAnalyses(user!.id).then(projects => {
-        if (projects.length > 0) {
-           navigate(`/customer/report/${projects[0].id}`);
-        }
-      });
+      // 분석 완료 후 상세 리포트 페이지로 자동 이동
+      if (completedProjectId) {
+        navigate(`/customer/report/${completedProjectId}`);
+        setCompletedProjectId(null);
+      } else {
+        // 프로젝트 ID가 없는 경우 목록만 새로고침
+        loadAnalyses();
+      }
     }, 500);
   };
 

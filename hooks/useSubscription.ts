@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react';
 import { useAuth } from '../contexts/AuthContext';
-import { supabase } from '../utils/supabase/client';
 
 export interface SubscriptionStatus {
   isPaid: boolean;
@@ -34,32 +33,16 @@ export function useSubscription(): SubscriptionStatus {
       }
 
       try {
-        // 사용자 정보에서 구독 상태 확인
-        const { data, error } = await supabase
-          .from('users')
-          .select('subscription_status, subscription_plan')
-          .eq('id', appUser.id)
-          .single();
-
-        if (error) {
-          console.error('Error checking subscription:', error);
-          setSubscription({
-            isPaid: false,
-            plan: 'free',
-            status: 'inactive',
-            loading: false,
-          });
-          return;
-        }
-
+        // TODO: 실제 구독 상태 확인 API 연동 필요
+        // 현재는 사용자 프로필의 구독 정보 사용
         const isPaid = 
-          data.subscription_status === 'active' && 
-          data.subscription_plan !== 'free';
+          appUser.subscription_status === 'active' && 
+          appUser.subscription_plan !== 'free';
 
         setSubscription({
           isPaid,
-          plan: (data.subscription_plan || 'free') as 'free' | 'basic' | 'pro' | 'enterprise',
-          status: (data.subscription_status || 'inactive') as 'active' | 'inactive' | 'cancelled',
+          plan: (appUser.subscription_plan || 'free') as 'free' | 'basic' | 'pro' | 'enterprise',
+          status: (appUser.subscription_status || 'inactive') as 'active' | 'inactive' | 'cancelled',
           loading: false,
         });
       } catch (error) {
@@ -78,4 +61,3 @@ export function useSubscription(): SubscriptionStatus {
 
   return subscription;
 }
-

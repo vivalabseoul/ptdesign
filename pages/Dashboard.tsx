@@ -3,8 +3,17 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { Button } from '../components/ui/button';
 import { Badge } from '../components/ui/badge';
 import { useAuth } from '../contexts/AuthContext';
-import { supabase, AnalysisRecord } from '../utils/supabase/client';
+// import { supabase, AnalysisRecord } from '../utils/supabase/client'; // AWS 마이그레이션
 import type { AnalysisResult } from '../components/Results';
+
+// AWS 마이그레이션: 임시 타입 정의
+interface AnalysisRecord {
+  id: string;
+  user_id: string;
+  url: string;
+  created_at: string;
+  [key: string]: any;
+}
 
 export function Dashboard() {
   const { user, appUser, signOut, isAdmin } = useAuth();
@@ -28,6 +37,8 @@ export function Dashboard() {
 
     try {
       console.log('분석 기록 로드 시도 - user.id:', user.id);
+      // AWS 마이그레이션: RDS로 대체 필요
+      /*
       const { data, error } = await supabase
         .from('analyses')
         .select('*')
@@ -41,6 +52,9 @@ export function Dashboard() {
         console.log(`분석 기록 ${data?.length || 0}개 로드됨:`, data);
         setAnalyses(data || []);
       }
+      */
+      console.log('AWS 마이그레이션: 분석 기록 로드 기능은 AWS RDS 설정 후 구현됩니다.');
+      setAnalyses([]);
     } catch (error) {
       console.error('Error loading analyses:', error);
       alert(`분석 기록을 불러오는 중 오류가 발생했습니다: ${error instanceof Error ? error.message : '알 수 없는 오류'}`);

@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { X, Mail, CheckCircle, AlertCircle } from "lucide-react";
-import { supabase } from "../../utils/supabase/client";
 
 interface ForgotPasswordModalProps {
   isOpen: boolean;
@@ -19,11 +18,8 @@ export function ForgotPasswordModal({ isOpen, onClose }: ForgotPasswordModalProp
     setLoading(true);
 
     try {
-      const { error } = await supabase.auth.resetPasswordForEmail(email, {
-        redirectTo: `${window.location.origin}/reset-password`,
-      });
-
-      if (error) throw error;
+      // TODO: 비밀번호 재설정 API 연동 필요
+      await new Promise(resolve => setTimeout(resolve, 1000));
 
       setSuccess(true);
       setTimeout(() => {

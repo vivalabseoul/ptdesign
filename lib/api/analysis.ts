@@ -1,4 +1,4 @@
-import { supabase } from "../supabase";
+// TODO: 데이터베이스 연동 필요
 import type { EvaluationCriteria, Improvement, ReportMetrics } from "../../pages/customer/report/types";
 
 export interface AnalysisProject {
@@ -19,212 +19,124 @@ export interface ReportData {
   targetMetrics: ReportMetrics;
 }
 
-const MOCK_PROJECTS_KEY = "protouchdesign:mockProjects";
-const MOCK_REPORTS_KEY = "protouchdesign:mockReports";
+// localStorage 기반 스토리지 (서버 재시작 시에도 데이터 유지)
+const STORAGE_KEY_PROJECTS = 'analysis_projects';
+const STORAGE_KEY_REPORTS = 'analysis_reports';
 
-const getMockProjects = (): AnalysisProject[] => {
+// localStorage에서 데이터 로드
+const loadProjects = (): AnalysisProject[] => {
+  if (typeof window === 'undefined') return [];
   try {
-    const raw = localStorage.getItem(MOCK_PROJECTS_KEY);
-    return raw ? JSON.parse(raw) : [];
+    const stored = localStorage.getItem(STORAGE_KEY_PROJECTS);
+    return stored ? JSON.parse(stored) : [];
   } catch {
     return [];
   }
 };
 
-const saveMockProject = (project: AnalysisProject) => {
-  const projects = getMockProjects();
-  projects.unshift(project);
-  localStorage.setItem(MOCK_PROJECTS_KEY, JSON.stringify(projects));
-};
-
-const updateMockProject = (
-  projectId: string,
-  status: AnalysisProject["status"]
-) => {
-  const projects = getMockProjects();
-  const project = projects.find((p) => p.id === projectId);
-  if (project) {
-    project.status = status;
-    project.updated_at = new Date().toISOString();
-    localStorage.setItem(MOCK_PROJECTS_KEY, JSON.stringify(projects));
-    return project;
-  }
-  throw new Error("Mock project not found");
-};
-
-const saveMockReport = (projectId: string, reportData: ReportData) => {
+const saveProjects = (projects: AnalysisProject[]) => {
+  if (typeof window === 'undefined') return;
   try {
-    const raw = localStorage.getItem(MOCK_REPORTS_KEY);
-    const reports = raw ? JSON.parse(raw) : {};
-    reports[projectId] = reportData;
-    localStorage.setItem(MOCK_REPORTS_KEY, JSON.stringify(reports));
-    return { project_id: projectId, report_data: reportData };
-  } catch {
-    return null;
+    localStorage.setItem(STORAGE_KEY_PROJECTS, JSON.stringify(projects));
+  } catch (e) {
+    console.error('Failed to save projects:', e);
   }
 };
 
-const getMockReport = (projectId: string) => {
+const loadReports = (): Map<string, { project_id: string; report_data: ReportData }> => {
+  if (typeof window === 'undefined') return new Map();
   try {
-    const raw = localStorage.getItem(MOCK_REPORTS_KEY);
-    const reports = raw ? JSON.parse(raw) : {};
-    return reports[projectId]
-      ? { project_id: projectId, report_data: reports[projectId] }
-      : null;
+    const stored = localStorage.getItem(STORAGE_KEY_REPORTS);
+    if (stored) {
+      const obj = JSON.parse(stored);
+      return new Map(Object.entries(obj));
+    }
   } catch {
-    return null;
+    return new Map();
+  }
+  return new Map();
+};
+
+const saveReports = (reports: Map<string, { project_id: string; report_data: ReportData }>) => {
+  if (typeof window === 'undefined') return;
+  try {
+    const obj = Object.fromEntries(reports);
+    localStorage.setItem(STORAGE_KEY_REPORTS, JSON.stringify(obj));
+  } catch (e) {
+    console.error('Failed to save reports:', e);
   }
 };
+
+let mockProjects: AnalysisProject[] = loadProjects();
+let mockReports: Map<string, { project_id: string; report_data: ReportData }> = loadReports();
 
 export async function createAnalysis(userId: string, url: string) {
-  if (userId.startsWith("mock-")) {
-    const project: AnalysisProject = {
-      id: `mock-proj-${Date.now()}`,
-      user_id: userId,
-      url,
-      status: "analyzing",
-      created_at: new Date().toISOString(),
-      updated_at: new Date().toISOString(),
-    };
-    saveMockProject(project);
-    return project;
-  }
+  const project: AnalysisProject = {
+    id: `project_${Date.now()}`,
+    user_id: userId,
+    url,
+    status: "analyzing",
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString(),
+  };
 
-  const { data, error } = await supabase
-    .from("projects")
-    .insert({
-      user_id: userId,
-      url: url,
-      status: "analyzing",
-    })
-    .select()
-    .single();
-
-  if (error) throw error;
-  return data as AnalysisProject;
+  mockProjects.push(project);
+  saveProjects(mockProjects);
+  return project;
 }
 
 export async function updateProjectStatus(
   projectId: string,
   status: AnalysisProject["status"]
 ) {
-  if (projectId.startsWith("mock-")) {
-    return updateMockProject(projectId, status);
+  const project = mockProjects.find(p => p.id === projectId);
+  if (!project) {
+    throw new Error("Project not found");
   }
 
-  const { data, error } = await supabase
-    .from("projects")
-    .update({ status })
-    .eq("id", projectId)
-    .select()
-    .single();
-
-  if (error) throw error;
-  return data as AnalysisProject;
+  project.status = status;
+  project.updated_at = new Date().toISOString();
+  saveProjects(mockProjects);
+  return project;
 }
 
 export async function saveAnalysisReport(projectId: string, reportData: ReportData) {
-  if (projectId.startsWith("mock-")) {
-    return saveMockReport(projectId, reportData);
-  }
-
-  const { data, error } = await supabase
-    .from("analysis_reports")
-    .insert({
-      project_id: projectId,
-      report_data: reportData,
-    })
-    .select()
-    .single();
-
-  if (error) throw error;
-  return data;
+  const report = { project_id: projectId, report_data: reportData };
+  mockReports.set(projectId, report);
+  saveReports(mockReports);
+  return report;
 }
 
-export async function getAnalysisReport(projectId: string) {
-  if (projectId.startsWith("mock-")) {
-    return getMockReport(projectId);
-  }
-
-  const { data, error } = await supabase
-    .from("analysis_reports")
-    .select("*")
-    .eq("project_id", projectId)
-    .single();
-
-  if (error && error.code !== "PGRST116") throw error;
-  return data;
+export async function getAnalysisReport(projectId: string): Promise<{ project_id: string; report_data: ReportData } | null> {
+  // TODO: 데이터베이스에서 조회
+  return mockReports.get(projectId) || null;
 }
 
 export async function getUserAnalyses(userId: string) {
-  if (userId.startsWith("mock-")) {
-    return getMockProjects().filter((p) => p.user_id === userId);
-  }
-
-  const { data, error } = await supabase
-    .from("projects")
-    .select("*")
-    .eq("user_id", userId)
-    .order("created_at", { ascending: false });
-
-  if (error) throw error;
-  return data as AnalysisProject[];
+  return mockProjects.filter(p => p.user_id === userId);
 }
 
 export async function getAllAnalyses() {
-  // Mock 데이터인 경우 로컬 스토리지의 모든 프로젝트 반환
-  if (localStorage.getItem(MOCK_PROJECTS_KEY)) {
-    return getMockProjects();
-  }
-
-  const { data, error } = await supabase
-    .from("projects")
-    .select("*")
-    .order("created_at", { ascending: false })
-    .limit(20); // 최근 20개만 가져옴
-
-  if (error) throw error;
-  return data as AnalysisProject[];
+  return mockProjects.slice(0, 20);
 }
 
 export async function getAnalysisById(analysisId: string) {
-  if (analysisId.startsWith("mock-")) {
-    const project = getMockProjects().find((p) => p.id === analysisId);
-    if (!project) throw new Error("Project not found");
-    return project;
+  const project = mockProjects.find(p => p.id === analysisId);
+  if (!project) {
+    throw new Error("Project not found");
   }
-
-  const { data, error } = await supabase
-    .from("projects")
-    .select("*")
-    .eq("id", analysisId)
-    .single();
-
-  if (error) throw error;
-  return data as AnalysisProject;
+  return project;
 }
 
-const deleteMockProject = (projectId: string) => {
-  try {
-    const projects = getMockProjects();
-    const filtered = projects.filter((p) => p.id !== projectId);
-    localStorage.setItem(MOCK_PROJECTS_KEY, JSON.stringify(filtered));
-    return true;
-  } catch {
-    return false;
-  }
-};
-
 export async function deleteAnalysis(projectId: string) {
-  if (projectId.startsWith("mock-")) {
-    deleteMockProject(projectId);
-    return;
+  const index = mockProjects.findIndex(p => p.id === projectId);
+  if (index > -1) {
+    mockProjects.splice(index, 1);
+    saveProjects(mockProjects);
   }
-
-  const { error } = await supabase
-    .from("projects")
-    .delete()
-    .eq("id", projectId);
-
-  if (error) throw error;
+  // 리포트도 함께 삭제
+  if (mockReports.has(projectId)) {
+    mockReports.delete(projectId);
+    saveReports(mockReports);
+  }
 }

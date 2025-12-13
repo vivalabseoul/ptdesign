@@ -181,10 +181,11 @@ export async function generateReportPDF(
       document.body.removeChild(container);
     }
 
-    const fileName = `Report_${report.url.replace(
-      /[^a-zA-Z0-9]/g,
-      ""
-    )}_${new Date().toISOString().slice(0, 10)}.pdf`;
+    const dateStr = new Date().toISOString().slice(0, 10).replace(/-/g, '');
+    const fileName = `ProTouchDesign_Analysis_Report_${dateStr}.pdf`;
+    console.log('PDF 생성 시작, 파일명:', fileName);
+    
+    // PDF 저장
     pdf.save(fileName);
   } catch (error) {
     console.error("PDF 생성 실패:", error);
@@ -421,23 +422,22 @@ export function createOverviewTemplateHTML(
         /* 상단 차트 & 지표 레이아웃 (1열: 좌 차트, 우 지표) */
         .top-chart-metrics {
           display: flex;
-          gap: 20px;
+          gap: 10px;
           align-items: stretch;
           margin-bottom: 5px;
         }
 
-        .left-chart {
-          flex: 0.7
-          padding: 5px;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          min-height: 200px;
-          max-width: 280px;
-        }
+            .left-chart {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100px;
+      max-width: 450px;
+    }
 
         .right-metrics {
-          flex: 1;
+          flex: 1 ;
           display: flex;
           flex-direction: column;
         }
@@ -454,7 +454,7 @@ export function createOverviewTemplateHTML(
           background: #ffffff;
           border: 1px solid #E5E7EB;
           border-radius: 8px;
-          padding: 12px;
+          padding: 10px;
           text-align: center;
           display: flex;
           flex-direction: column;
@@ -462,7 +462,7 @@ export function createOverviewTemplateHTML(
         }
         
         .metric-label {
-          font-size: 11px;
+          font-size: 13px;
           color: #6B7280;
           margin-bottom: 6px;
           font-weight: 600;
@@ -470,7 +470,7 @@ export function createOverviewTemplateHTML(
         }
         
         .metric-value {
-          font-size: 20px;
+          font-size: 26px;
           font-weight: 800;
           color: #111111;
           margin-bottom: 4px;
@@ -478,7 +478,7 @@ export function createOverviewTemplateHTML(
         }
         
         .metric-target {
-          font-size: 12px;
+          font-size: 14px;
           color: #9CA3AF;
           text-align: center;
         }
@@ -555,7 +555,6 @@ export function createOverviewTemplateHTML(
         
         .improvement-card {
           border: 1px solid #E5E7EB;
-          border-left-width: 4px;
           padding: 14px;
           border-radius: 4px;
           background: #ffffff;
@@ -720,7 +719,7 @@ export function createOverviewTemplateHTML(
             .map((item) => {
               const priorityColor = getPriorityColor(item.priority);
               return `
-            <div class="improvement-card" style="border-left-color: ${priorityColor};">
+            <div class="improvement-card">
               <div class="improvement-header">
                 <span style="color: ${priorityColor}; font-weight: 700; font-size: 12px;">[${getPriorityLabel(
                 item.priority
@@ -849,7 +848,7 @@ export function createOverviewTemplateHTML(
             .map((item) => {
               const priorityColor = getPriorityColor(item.priority);
               return `
-            <div class="improvement-card" style="border-left-color: ${priorityColor};">
+            <div class="improvement-card">
               <div class="improvement-header">
                 <span style="color: ${priorityColor}; font-weight: 700; font-size: 12px;">[${getPriorityLabel(
                 item.priority

@@ -8,8 +8,12 @@ import {
   CardDescription,
 } from "./ui/card";
 import { Badge } from "./ui/badge";
-import { projectId, publicAnonKey } from "../utils/supabase/info";
+// import { projectId, publicAnonKey } from "../utils/supabase/info"; // AWS 마이그레이션
 import type { AnalysisResult } from "./Results";
+
+// AWS 마이그레이션: 임시 변수
+const projectId = 'temp';
+const publicAnonKey = 'temp';
 
 interface AdminProps {
   onViewResult: (result: AnalysisResult) => void;

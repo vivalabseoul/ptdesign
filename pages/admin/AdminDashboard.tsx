@@ -41,7 +41,7 @@ import {
   saveAnalysisReport,
   updateProjectStatus,
 } from "../../lib/api/analysis";
-import { analyzeWebsite } from "../../lib/openai";
+import { analyzeWebsite } from "../../lib/gemini";
 import { AnalysisLoading } from "../../components/AnalysisLoading";
 
 export function AdminDashboard() {
