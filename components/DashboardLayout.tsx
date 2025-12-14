@@ -100,11 +100,11 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
         <div className="p-4 border-t border-gray-200 flex-shrink-0">
           <div className="flex items-center gap-3 px-4 py-3 rounded-lg bg-gray-50 mb-2">
             <div className="w-10 h-10 rounded-full flex items-center justify-center text-white" style={{ background: 'var(--primary)' }}>
-              {user?.name.charAt(0)}
+              {user?.email?.charAt(0).toUpperCase()}
             </div>
             <div className="flex-1 min-w-0">
               <div className="font-semibold truncate" style={{ color: 'var(--primary)' }}>
-                {user?.name}
+                {user?.email?.split('@')[0]}
               </div>
               <div className="text-sm text-gray-500 truncate">{user?.email}</div>
             </div>
