@@ -22,7 +22,7 @@ export function PricingPage() {
         "메인/랜딩페이지",
         "기초 점검 레벨",
         "개선 프롬프트 1종",
-        "1쪽 PDF 리포트 + TXT",
+        /*"1쪽 PDF 리포트 + TXT",*/
         "4시간 초고속 납기"
       ],
       badge: "가장 저렴!",
@@ -41,7 +41,7 @@ export function PricingPage() {
         "기초 분석 + 기본 CVR 분석",
         "개선 프롬프트 3종",
         "기초 접근성 감사 + 체크리스트",
-        "2쪽 PDF 리포트 + TXT",
+        /*"2쪽 PDF 리포트 + TXT",*/
         "24시간 빠른 납기"
       ],
       badge: "가성비 최고!",
@@ -60,7 +60,7 @@ export function PricingPage() {
         "심층 분석 + 심화 CVR 분석",
         "개선 프롬프트 5종 + 이미지 3개",
         "완전 접근성 감사 + 히트맵/세션",
-        "5쪽 PDF 리포트 + TXT + 체크리스트",
+        /*"5쪽 PDF 리포트 + TXT + 체크리스트",*/
         "72시간 납기"
       ],
       badge: "인기",
@@ -80,7 +80,7 @@ export function PricingPage() {
         "개선 프롬프트 5종+ + 이미지 5개+",
         "CSS 가이드 (기본/전체)",
         "전사 접근성 표준화 + 심층 사용자 테스트",
-        "8~20쪽 상세 PDF 리포트 + TXT + 상세 체크리스트",
+        /*"8~20쪽 상세 PDF 리포트 + TXT + 상세 체크리스트",*/
         "72시간 납기"
       ],
       badge: "풀버전!",
@@ -110,7 +110,7 @@ export function PricingPage() {
     { category: "납품물", name: "리포트", quick: "1쪽", micro: "2쪽", full: "5쪽", system: "8~20쪽" },
     { category: "납품물", name: "체크리스트", quick: false, micro: true, full: true, system: "✓ 상세" },
     { category: "납품물", name: "이미지 프롬프트", quick: false, micro: false, full: "3개", system: "5개+" },
-    { category: "납품물", name: "납품 형식", quick: "PDF + TXT", micro: "PDF + TXT", full: "PDF + TXT", system: "PDF + TXT" },
+    /*{ category: "납품물", name: "납품 형식", quick: "PDF + TXT", micro: "PDF + TXT", full: "PDF + TXT", system: "PDF + TXT" },*/
     
     // 서비스 조건
     { category: "서비스 조건", name: "납기", quick: "4시간", micro: "24시간", full: "72시간", system: "72시간" },

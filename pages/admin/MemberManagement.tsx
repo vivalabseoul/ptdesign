@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { DashboardLayout } from "../../components/DashboardLayout";
 import { Users, Search, Filter, MoreVertical, Mail, Phone, Calendar, Award } from "lucide-react";
 
@@ -17,6 +18,7 @@ interface Member {
 }
 
 export function MemberManagement() {
+  const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState("");
   const [filterRole, setFilterRole] = useState("all");
   const [filterPlan, setFilterPlan] = useState("all");
@@ -365,7 +367,11 @@ export function MemberManagement() {
               </thead>
               <tbody>
                 {filteredMembers.map((member) => (
-                  <tr key={member.id} className="border-b border-gray-100 hover:bg-gray-50 transition-colors">
+                  <tr 
+                    key={member.id} 
+                    onClick={() => navigate(`/admin/member/${member.id}`)}
+                    className="border-b border-gray-100 hover:bg-gray-50 transition-colors cursor-pointer"
+                  >
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-3">
                         <div className="w-10 h-10 rounded-full flex items-center justify-center text-white" style={{ background: getRoleColor(member.role) }}>
@@ -412,12 +418,35 @@ export function MemberManagement() {
                     </td>
                     <td className="px-6 py-4">
                       {member.role === "expert" ? (
-                        <span
-                          className="px-3 py-1 rounded-full text-sm font-semibold text-white"
-                          style={{ background: getApprovalStatusColor(member.approvalStatus) }}
-                        >
-                          {getApprovalStatusLabel(member.approvalStatus)}
-                        </span>
+                        <div className="flex items-center gap-3">
+                          {/* Toggle Switch */}
+                          <button
+                            onClick={() => {
+                              // TODO: API 호출로 승인 상태 변경
+                              console.log(`Toggle approval for ${member.email}`);
+                            }}
+                            className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
+                              member.approvalStatus === "approved"
+                                ? "bg-green-500"
+                                : "bg-gray-300"
+                            }`}
+                          >
+                            <span
+                              className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+                                member.approvalStatus === "approved"
+                                  ? "translate-x-6"
+                                  : "translate-x-1"
+                              }`}
+                            />
+                          </button>
+                          {/* Status Label */}
+                          <span
+                            className="text-sm font-semibold"
+                            style={{ color: getApprovalStatusColor(member.approvalStatus) }}
+                          >
+                            {getApprovalStatusLabel(member.approvalStatus)}
+                          </span>
+                        </div>
                       ) : (
                         <span className="text-base text-gray-400">-</span>
                       )}

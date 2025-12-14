@@ -37,6 +37,7 @@ import { ExpertReview } from "./pages/expert/ExpertReview";
 import { AdminDashboard } from "./pages/admin/AdminDashboard";
 import { GuidelineMaker } from "./pages/admin/GuidelineMaker";
 import { MemberManagement } from "./pages/admin/MemberManagement";
+import { MemberDetail } from "./pages/admin/MemberDetail";
 import { MemberUsage } from "./pages/admin/MemberUsage";
 import { ProjectManagement } from "./pages/admin/ProjectManagement";
 import { PdfTemplatePreview } from "./pages/admin/PdfTemplatePreview";
@@ -142,6 +143,10 @@ function AppRoutes() {
       <Route
         path="/admin/members"
         element={user?.role === "admin" ? <MemberManagement /> : <Navigate to="/" />}
+      />
+      <Route
+        path="/admin/member/:id"
+        element={user?.role === "admin" ? <MemberDetail /> : <Navigate to="/" />}
       />
       <Route
         path="/admin/member-usage"
