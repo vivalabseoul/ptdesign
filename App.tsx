@@ -11,6 +11,7 @@ import { PortfolioPage } from "./pages/PortfolioPage";
 import { PricingPage } from "./pages/PricingPage";
 import { PricingDetailPage } from "./pages/PricingDetailPage";
 import { LoginPage } from "./pages/LoginPage";
+import { SignupPage } from "./pages/SignupPage";
 import { ResetPasswordPage } from "./pages/ResetPasswordPage";
 import { CaseDetailPage } from "./pages/CaseDetailPage";
 import { AuthCallbackPage } from "./pages/AuthCallbackPage";
@@ -87,6 +88,7 @@ function AppRoutes() {
       <Route path="/pricing" element={<PricingPage />} />
       <Route path="/pricing-detail" element={<PricingDetailPage />} />
       <Route path="/login" element={<LoginPage />} />
+      <Route path="/signup" element={<SignupPage />} />
       <Route path="/reset-password" element={<ResetPasswordPage />} />
       <Route path="/case-detail" element={<CaseDetailPage />} />
       <Route path="/auth/callback" element={<AuthCallbackPage />} />
