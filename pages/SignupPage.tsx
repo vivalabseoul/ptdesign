@@ -110,7 +110,7 @@ export function SignupPage() {
               />
             </div>
             <h2 style={{ color: "var(--primary)" }}>회원가입</h2>
-            <p className="text-gray-600 mt-2">14일 체험을 시작하세요</p>
+            <p className="text-gray-600 mt-2">ProTouchDesign에 오신 것을 환영합니다</p>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-5">
