@@ -107,7 +107,7 @@ export function Hero({ onAnalyze, isAnalyzing, isAuthenticated, onNavigateToDash
             </button>
           </div>
           <p className="mt-4 text-base text-gray-400">
-            14일 체험 · 신용카드 불필요 · 즉시 결과 확인 · 회원가입후 체험가능
+            즉시 결과 확인 · 회원가입후 사용가능
           </p>
         </div>
 

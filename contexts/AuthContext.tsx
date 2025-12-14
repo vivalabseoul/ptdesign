@@ -1,22 +1,14 @@
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import * as authApi from '../lib/api/auth';
-
-interface UserProfile {
-  id: string;
-  email: string;
-  name: string;
-  role: 'customer' | 'expert' | 'admin';
-  subscriptionTier: 'free' | 'basic' | 'professional' | 'enterprise';
-  freeAnalysisUsed: boolean;
-  subscription_status?: 'active' | 'inactive' | 'cancelled';
-  subscription_plan?: 'free' | 'basic' | 'pro' | 'enterprise';
-}
+import type { UserProfile } from '../lib/api/auth';
 
 interface AuthContextType {
   user: UserProfile | null;
   loading: boolean;
   signInWithGoogle: () => Promise<void>;
   signInWithKakao: () => Promise<void>;
+  signInWithEmail: (email: string, password: string) => Promise<void>;
+  signUpWithEmail: (email: string, password: string, name: string) => Promise<void>;
   logout: () => Promise<void>;
   isAuthenticated: boolean;
   isAdmin: boolean;
@@ -35,6 +27,8 @@ const AuthContext = createContext<AuthContextType>({
   loading: true,
   signInWithGoogle: async () => {},
   signInWithKakao: async () => {},
+  signInWithEmail: async () => {},
+  signUpWithEmail: async () => {},
   logout: async () => {},
   isAuthenticated: false,
   isAdmin: false,
@@ -65,20 +59,7 @@ export function AuthProvider({ children, onOpenAuthModal }: AuthProviderProps) {
       try {
         const currentUser = await authApi.getCurrentUser();
         if (currentUser) {
-          // Supabase users 테이블의 role을 UserProfile의 role 타입으로 매핑
-          const mappedUser: UserProfile = {
-            id: currentUser.id,
-            email: currentUser.email,
-            name: currentUser.email.split('@')[0], // 이름이 없으면 이메일에서 추출
-            role: currentUser.role === 'admin' ? 'admin' : 'customer',
-            subscriptionTier: currentUser.subscription_plan === 'pro' ? 'professional' : 
-                            currentUser.subscription_plan === 'basic' ? 'basic' : 
-                            currentUser.subscription_plan === 'enterprise' ? 'enterprise' : 'free',
-            freeAnalysisUsed: false,
-            subscription_status: currentUser.subscription_status,
-            subscription_plan: currentUser.subscription_plan,
-          };
-          setUser(mappedUser);
+          setUser(currentUser);
         }
       } catch (error) {
         console.error('인증 초기화 실패:', error);
@@ -112,6 +93,31 @@ export function AuthProvider({ children, onOpenAuthModal }: AuthProviderProps) {
     }
   };
 
+  // 이메일 로그인
+  const signInWithEmail = async (email: string, password: string) => {
+    try {
+      const { user: authUser } = await authApi.signInWithEmail(email, password);
+      if (authUser) {
+        const currentUser = await authApi.getCurrentUser();
+        setUser(currentUser);
+      }
+    } catch (error) {
+      console.error('이메일 로그인 실패:', error);
+      throw error;
+    }
+  };
+
+  // 이메일 회원가입
+  const signUpWithEmail = async (email: string, password: string, name: string) => {
+    try {
+      await authApi.signUpWithEmail(email, password, name);
+      // 회원가입 후 자동 로그인은 하지 않음 (이메일 인증 필요할 수 있음)
+    } catch (error) {
+      console.error('이메일 회원가입 실패:', error);
+      throw error;
+    }
+  };
+
   // 로그아웃 - Supabase API
   const logout = async () => {
     try {
@@ -128,6 +134,8 @@ export function AuthProvider({ children, onOpenAuthModal }: AuthProviderProps) {
     loading,
     signInWithGoogle,
     signInWithKakao,
+    signInWithEmail,
+    signUpWithEmail,
     logout,
     // Aliases and Helpers
     isAuthenticated: !!user,

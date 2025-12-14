@@ -22,7 +22,7 @@ export function SignupPage() {
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
-  const { signup } = useAuth();
+  const { signUpWithEmail } = useAuth();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -31,12 +31,21 @@ export function SignupPage() {
       return;
     }
 
+    if (formData.password.length < 6) {
+      setError("비밀번호는 최소 6자 이상이어야 합니다.");
+      return;
+    }
+
     setError(null);
     setLoading(true);
 
     try {
-      // OAuth 로그인으로 리다이렉트
-      // 현재 앱은 OAuth만 지원하므로 로그인 페이지로 이동
+      await signUpWithEmail(formData.email, formData.password, formData.name);
+      
+      // 회원가입 성공 메시지
+      alert("회원가입이 완료되었습니다! 로그인 페이지로 이동합니다.");
+      
+      // 로그인 페이지로 이동
       navigate("/login");
     } catch (err: any) {
       console.error("회원가입 실패:", err);

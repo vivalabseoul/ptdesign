@@ -3,11 +3,59 @@ import { supabase } from '../supabase'
 export interface UserProfile {
   id: string
   email: string
-  role: 'admin' | 'user'
+  role: 'admin' | 'customer' | 'expert'
   subscription_status?: 'active' | 'inactive' | 'cancelled'
   subscription_plan?: 'free' | 'basic' | 'pro' | 'enterprise'
   created_at?: string
   updated_at?: string
+}
+
+/**
+ * 이메일/비밀번호 로그인
+ */
+export async function signInWithEmail(email: string, password: string) {
+  const { data, error } = await supabase.auth.signInWithPassword({
+    email,
+    password,
+  })
+  
+  if (error) throw error
+  return data
+}
+
+/**
+ * 이메일/비밀번호 회원가입
+ */
+export async function signUpWithEmail(email: string, password: string, name: string) {
+  const { data, error } = await supabase.auth.signUp({
+    email,
+    password,
+    options: {
+      data: {
+        name,
+      }
+    }
+  })
+  
+  if (error) throw error
+  
+  // users 테이블에 프로필 생성
+  if (data.user) {
+    const { error: profileError } = await supabase.from('users').insert({
+      id: data.user.id,
+      email,
+      role: 'user',
+      subscription_status: 'inactive',
+      subscription_plan: 'free',
+    })
+    
+    // 프로필 생성 실패는 무시 (이미 존재할 수 있음)
+    if (profileError) {
+      console.warn('Profile creation warning:', profileError)
+    }
+  }
+  
+  return data
 }
 
 /**
@@ -69,7 +117,7 @@ export async function getCurrentUser(): Promise<UserProfile | null> {
     return {
       id: session.user.id,
       email: session.user.email!,
-      role: 'user',
+      role: 'customer',
       subscription_status: 'inactive',
       subscription_plan: 'free',
     }
