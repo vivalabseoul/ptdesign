@@ -33,7 +33,10 @@ export async function signUpWithEmail(email: string, password: string, name: str
     options: {
       data: {
         name,
-      }
+      },
+      // 개발/테스트 중에는 이메일 인증 자동 확인
+      // 운영 환경에서는 Supabase Dashboard에서 설정 필요
+      emailRedirectTo: `${window.location.origin}/auth/callback`,
     }
   })
   
@@ -44,7 +47,7 @@ export async function signUpWithEmail(email: string, password: string, name: str
     const { error: profileError } = await supabase.from('users').insert({
       id: data.user.id,
       email,
-      role: 'user',
+      role: 'customer',
       subscription_status: 'inactive',
       subscription_plan: 'free',
     })

@@ -22,7 +22,7 @@ export function SignupPage() {
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
-  const { signUpWithEmail } = useAuth();
+  const { signUpWithEmail, signInWithEmail } = useAuth();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -40,13 +40,22 @@ export function SignupPage() {
     setLoading(true);
 
     try {
+      // 회원가입
       await signUpWithEmail(formData.email, formData.password, formData.name);
       
       // 회원가입 성공 메시지
-      alert("회원가입이 완료되었습니다! 로그인 페이지로 이동합니다.");
+      alert("회원가입이 완료되었습니다!");
       
-      // 로그인 페이지로 이동
-      navigate("/login");
+      // 자동 로그인 시도
+      try {
+        await signInWithEmail(formData.email, formData.password);
+        // 로그인 성공 시 대시보드로 이동
+        navigate("/customer/dashboard");
+      } catch (loginErr) {
+        // 자동 로그인 실패 시 로그인 페이지로 이동
+        console.warn("자동 로그인 실패, 로그인 페이지로 이동:", loginErr);
+        navigate("/login");
+      }
     } catch (err: any) {
       console.error("회원가입 실패:", err);
       setError(err.message || "회원가입에 실패했습니다.");
