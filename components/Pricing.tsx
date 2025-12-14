@@ -1,14 +1,83 @@
 import { Check, ArrowRight } from "lucide-react";
 import { useAuth } from "../contexts/AuthContext";
-import { useLanguage } from "../contexts/LanguageContext";
-import { pricingTranslations } from "../translations/pricing";
 
 export function Pricing() {
   const { openAuthModal } = useAuth();
-  const { language } = useLanguage();
   
-  const t = pricingTranslations[language];
-  const plans = t.plans;
+  const plans = [
+    {
+      id: "quick-scan",
+      name: "퀵 스캔",
+      price: "29K",
+      desc: "뭔가 이상한데? 빠른 점검",
+      usp: "4시간 납기 · 긴급/점검용",
+      features: [
+        "메인/랜딩페이지",
+        "기초 점검 레벨",
+        "개선 프롬프트 1종",
+        "1쪽 PDF 리포트 + TXT",
+        "4시간 초고속 납기"
+      ],
+      badge: "가장 저렴!",
+      badgeColor: "bg-[var(--secondary)]",
+      highlight: false,
+    },
+    {
+      id: "micro-analysis",
+      name: "마이크로 분석",
+      price: "99K",
+      desc: "스타트업, MVP, 긴급 진단",
+      usp: "24시간 납기 · 1페이지 완전 분석",
+      features: [
+        "1페이지 (모바일/데스크톱)",
+        "기초 분석 + 기본 CVR 분석",
+        "개선 프롬프트 3종",
+        "기초 접근성 감사 + 체크리스트",
+        "2쪽 PDF 리포트 + TXT",
+        "24시간 빠른 납기"
+      ],
+      badge: "가성비 최고!",
+      badgeColor: "bg-[var(--accent)]",
+      highlight: false,
+    },
+    {
+      id: "full-page-deep",
+      name: "풀페이지 심층",
+      price: "299K",
+      desc: "중소기업, 이커머스 (최대 3페이지)",
+      usp: "72시간 납기 · 추가 페이지당 ₩80K",
+      features: [
+        "전체 1페이지 (크로스브라우징)",
+        "심층 분석 + 심화 CVR 분석",
+        "개선 프롬프트 5종 + 이미지 3개",
+        "완전 접근성 감사 + 히트맵/세션",
+        "5쪽 PDF 리포트 + TXT + 체크리스트",
+        "72시간 납기"
+      ],
+      badge: "인기",
+      badgeColor: "bg-[var(--accent)]",
+      highlight: true,
+    },
+    {
+      id: "full-system",
+      name: "전체 시스템",
+      price: "협의",
+      desc: "대규모 플랫폼, 장기 시스템 (최소 799K)",
+      usp: "72시간 납기 · 맞춤 견적 제공",
+      features: [
+        "전체 사이트 (크로스브라우징 심층)",
+        "전문가 분석 + 고급 CVR (퍼널)",
+        "개선 프롬프트 5종+ + 이미지 5개+",
+        "CSS 가이드 (기본/전체)",
+        "전사 접근성 표준화 + 심층 사용자 테스트",
+        "8~20쪽 상세 PDF 리포트 + TXT + 상세 체크리스트",
+        "72시간 납기"
+      ],
+      badge: "풀버전!",
+      badgeColor: "bg-[#1A1A1A]",
+      highlight: false,
+    },
+  ];
 
   return (
     <section id="pricing" className="relative py-32 overflow-hidden" style={{ background: "#0a0a0a" }}>
