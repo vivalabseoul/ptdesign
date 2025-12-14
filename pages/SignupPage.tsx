@@ -5,7 +5,6 @@ import {
   Mail,
   Lock,
   User,
-  Building,
   AlertCircle,
 } from "lucide-react";
 import { useAuth } from "../contexts/AuthContext";
@@ -13,11 +12,9 @@ import { useAuth } from "../contexts/AuthContext";
 export function SignupPage() {
   const [formData, setFormData] = useState({
     name: "",
-    company: "",
     email: "",
     password: "",
     confirmPassword: "",
-    role: "customer" as "customer" | "expert" | "admin",
   });
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
@@ -122,78 +119,7 @@ export function SignupPage() {
               </div>
             )}
 
-            {/* Role Selection */}
-            <div>
-              <label
-                className="block font-semibold mb-3"
-                style={{ color: "var(--primary)" }}
-              >
-                가입 유형 *
-              </label>
-              <div className="grid grid-cols-3 gap-2">
-                <button
-                  type="button"
-                  onClick={() => setFormData({ ...formData, role: "customer" })}
-                  className={`py-3 rounded-lg font-semibold transition-all ${
-                    formData.role === "customer"
-                      ? "text-white shadow-lg"
-                      : "bg-gray-100 text-gray-600 hover:bg-gray-200"
-                  }`}
-                  style={
-                    formData.role === "customer"
-                      ? { background: "var(--accent)" }
-                      : {}
-                  }
-                >
-                  고객
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setFormData({ ...formData, role: "expert" })}
-                  className={`py-3 rounded-lg font-semibold transition-all ${
-                    formData.role === "expert"
-                      ? "text-white shadow-lg"
-                      : "bg-gray-100 text-gray-600 hover:bg-gray-200"
-                  }`}
-                  style={
-                    formData.role === "expert"
-                      ? { background: "var(--accent)" }
-                      : {}
-                  }
-                >
-                  전문가
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setFormData({ ...formData, role: "admin" })}
-                  className={`py-3 rounded-lg font-semibold transition-all ${
-                    formData.role === "admin"
-                      ? "text-white shadow-lg"
-                      : "bg-gray-100 text-gray-600 hover:bg-gray-200"
-                  }`}
-                  style={
-                    formData.role === "admin"
-                      ? { background: "var(--accent)" }
-                      : {}
-                  }
-                >
-                  관리자
-                </button>
-              </div>
-              <p className="text-sm text-gray-500 mt-2">
-                선택된 유형:{" "}
-                <span
-                  className="font-semibold"
-                  style={{ color: "var(--accent)" }}
-                >
-                  {formData.role === "customer"
-                    ? "고객"
-                    : formData.role === "expert"
-                    ? "전문가"
-                    : "관리자"}
-                </span>
-              </p>
-            </div>
+
 
             <div>
               <label
@@ -218,28 +144,7 @@ export function SignupPage() {
               </div>
             </div>
 
-            <div>
-              <label
-                htmlFor="company"
-                className="block font-semibold mb-2"
-                style={{ color: "var(--primary)" }}
-              >
-                회사명 *
-              </label>
-              <div className="relative">
-                <Building className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
-                <input
-                  type="text"
-                  id="company"
-                  name="company"
-                  required
-                  value={formData.company}
-                  onChange={handleChange}
-                  placeholder="회사명을 입력하세요"
-                  className="w-full pl-12 pr-4 py-3 rounded-lg border-2 border-gray-200 focus:border-[var(--accent)] outline-none transition-colors"
-                />
-              </div>
-            </div>
+
 
             <div>
               <label
