@@ -1,6 +1,5 @@
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import * as authApi from '../lib/api/auth';
-import { getAuthErrorMessage } from '../lib/api/errors';
 
 interface UserProfile {
   id: string;
@@ -11,52 +10,38 @@ interface UserProfile {
   freeAnalysisUsed: boolean;
   subscription_status?: 'active' | 'inactive' | 'cancelled';
   subscription_plan?: 'free' | 'basic' | 'pro' | 'enterprise';
-  approvalStatus?: 'pending' | 'approved' | 'rejected';
-}
-
-interface AuthResult {
-  error?: Error | { message: string };
 }
 
 interface AuthContextType {
   user: UserProfile | null;
   loading: boolean;
-  login: (email: string, password: string) => Promise<UserProfile & AuthResult>;
-  signup: (email: string, password: string, name: string, role: 'customer' | 'expert' | 'admin') => Promise<UserProfile & AuthResult>;
+  signInWithGoogle: () => Promise<void>;
+  signInWithKakao: () => Promise<void>;
   logout: () => Promise<void>;
-  openAuthModal: (mode?: 'login' | 'signup') => void;
-  // Aliases and Helpers
   isAuthenticated: boolean;
   isAdmin: boolean;
   appUser: UserProfile | null;
-  signIn: (email: string, password: string) => Promise<UserProfile & AuthResult>;
-  signOut: () => Promise<void>;
-  signUp: (email: string, password: string, name: string, role: 'customer' | 'expert' | 'admin') => Promise<UserProfile & AuthResult>;
 }
 
 const AuthContext = createContext<AuthContextType>({
   user: null,
   loading: true,
-  login: async () => ({} as UserProfile),
-  signup: async () => ({} as UserProfile),
+  signInWithGoogle: async () => {},
+  signInWithKakao: async () => {},
   logout: async () => {},
-  openAuthModal: () => {},
   isAuthenticated: false,
   isAdmin: false,
   appUser: null,
-  signIn: async () => ({} as UserProfile),
-  signOut: async () => {},
-  signUp: async () => ({} as UserProfile),
 });
 
 export const useAuth = () => useContext(AuthContext);
 
 interface AuthProviderProps {
   children: ReactNode;
-  onOpenAuthModal: (mode?: 'login' | 'signup') => void;
+  onOpenAuthModal?: (mode?: 'login' | 'signup') => void;
 }
 
-export function AuthProvider({ children, onOpenAuthModal }: AuthProviderProps) {
+export function AuthProvider({ children }: AuthProviderProps) {
   const [user, setUser] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -91,64 +76,25 @@ export function AuthProvider({ children, onOpenAuthModal }: AuthProviderProps) {
     initializeAuth();
   }, []);
 
-  // 로그인 - Supabase API
-  const login = async (email: string, password: string) => {
+  // 구글 로그인
+  const signInWithGoogle = async () => {
     try {
-      const apiUser = await authApi.signIn({ email, password });
-      
-      // Supabase users 테이블의 role을 UserProfile의 role 타입으로 매핑
-      const profile: UserProfile = {
-        id: apiUser.id,
-        email: apiUser.email,
-        name: email.split('@')[0],
-        role: apiUser.role === 'admin' ? 'admin' : 'customer',
-        subscriptionTier: apiUser.subscription_plan === 'pro' ? 'professional' : 
-                        apiUser.subscription_plan === 'basic' ? 'basic' : 
-                        apiUser.subscription_plan === 'enterprise' ? 'enterprise' : 'free',
-        freeAnalysisUsed: false,
-        subscription_status: apiUser.subscription_status,
-        subscription_plan: apiUser.subscription_plan,
-      };
-
-      setUser(profile);
-      return { ...profile, error: undefined };
+      await authApi.signInWithGoogle();
+      // OAuth는 리다이렉트되므로 여기서는 아무것도 하지 않음
     } catch (error) {
-      console.error('로그인 실패:', error);
-      const errorMessage = getAuthErrorMessage(error);
-      throw new Error(errorMessage);
+      console.error('구글 로그인 실패:', error);
+      throw error;
     }
   };
 
-  // 회원가입 - Supabase API
-  const signup = async (email: string, password: string, name: string, role: 'customer' | 'expert' | 'admin') => {
+  // 카카오 로그인
+  const signInWithKakao = async () => {
     try {
-      // Supabase에 회원가입 (role은 'admin' 또는 'user'로 매핑)
-      const apiUser = await authApi.signUp({
-        email,
-        password,
-        name,
-        role: role === 'admin' ? 'admin' : 'user',
-      });
-
-      const profile: UserProfile = {
-        id: apiUser.id,
-        email: apiUser.email,
-        name,
-        role,
-        subscriptionTier: 'free',
-        freeAnalysisUsed: false,
-        // 전문가 회원가입은 승인 대기 상태로 설정
-        approvalStatus: role === 'expert' ? 'pending' : 'approved',
-        subscription_status: apiUser.subscription_status,
-        subscription_plan: apiUser.subscription_plan,
-      };
-
-      setUser(profile);
-      return { ...profile, error: undefined };
+      await authApi.signInWithKakao();
+      // OAuth는 리다이렉트되므로 여기서는 아무것도 하지 않음
     } catch (error) {
-      console.error('회원가입 실패:', error);
-      const errorMessage = getAuthErrorMessage(error);
-      throw new Error(errorMessage);
+      console.error('카카오 로그인 실패:', error);
+      throw error;
     }
   };
 
@@ -163,25 +109,18 @@ export function AuthProvider({ children, onOpenAuthModal }: AuthProviderProps) {
     }
   };
 
-  const openAuthModal = (mode: 'login' | 'signup' = 'login') => {
-    onOpenAuthModal(mode);
-  };
-
   const value = {
     user,
     loading,
-    login,
-    signup,
+    signInWithGoogle,
+    signInWithKakao,
     logout,
-    openAuthModal,
     // Aliases and Helpers
     isAuthenticated: !!user,
     isAdmin: user?.role === 'admin',
     appUser: user,
-    signIn: login,
-    signOut: logout,
-    signUp: signup,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
+

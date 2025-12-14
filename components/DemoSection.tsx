@@ -54,7 +54,7 @@ export function DemoSection() {
               className="group flex items-center gap-2 px-8 py-4 rounded-xl text-white font-bold text-lg transition-all hover:shadow-lg hover:scale-105"
               style={{ background: "var(--accent)" }}
             >
-              무료 진단 신청하기
+              상담 신청하기
               <ArrowRight className="w-5 h-5 transition-transform group-hover:translate-x-1" />
             </button>
           </div>

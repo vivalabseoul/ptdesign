@@ -1,6 +1,7 @@
 import { Routes, Route, Navigate } from "react-router-dom";
 import { useState } from "react";
 import { AuthProvider, useAuth } from "./contexts/AuthContext";
+import { LanguageProvider } from "./contexts/LanguageContext";
 import { AuthModal } from "./components/AuthModal";
 
 // Landing Pages
@@ -12,6 +13,16 @@ import { PricingDetailPage } from "./pages/PricingDetailPage";
 import { LoginPage } from "./pages/LoginPage";
 import { ResetPasswordPage } from "./pages/ResetPasswordPage";
 import { CaseDetailPage } from "./pages/CaseDetailPage";
+import { AuthCallbackPage } from "./pages/AuthCallbackPage";
+
+// Legal Pages
+import { TermsOfService } from "./pages/legal/TermsOfService";
+import { PrivacyPolicy } from "./pages/legal/PrivacyPolicy";
+import { CookiePolicy } from "./pages/legal/CookiePolicy";
+
+// Payment Pages
+import { PaymentSuccessPage } from "./pages/payment/PaymentSuccessPage";
+import { PaymentFailPage } from "./pages/payment/PaymentFailPage";
 
 // Customer Pages
 import { CustomerDashboard } from "./pages/customer/CustomerDashboard";
@@ -28,6 +39,7 @@ import { MemberManagement } from "./pages/admin/MemberManagement";
 import { MemberUsage } from "./pages/admin/MemberUsage";
 import { ProjectManagement } from "./pages/admin/ProjectManagement";
 import { PdfTemplatePreview } from "./pages/admin/PdfTemplatePreview";
+import { PricingTierSamples } from "./pages/admin/PricingTierSamples";
 
 function App() {
   const [authModalOpen, setAuthModalOpen] = useState(false);
@@ -39,16 +51,18 @@ function App() {
   };
 
   return (
-    <AuthProvider onOpenAuthModal={openAuthModal}>
-      <AppRoutes />
+    <LanguageProvider>
+      <AuthProvider onOpenAuthModal={openAuthModal}>
+        <AppRoutes />
 
-      {/* Auth Modal */}
-      <AuthModal
-        isOpen={authModalOpen}
-        onClose={() => setAuthModalOpen(false)}
-        initialMode={authModalMode}
-      />
-    </AuthProvider>
+        {/* Auth Modal */}
+        <AuthModal
+          isOpen={authModalOpen}
+          onClose={() => setAuthModalOpen(false)}
+          initialMode={authModalMode}
+        />
+      </AuthProvider>
+    </LanguageProvider>
   );
 }
 
@@ -75,6 +89,16 @@ function AppRoutes() {
       <Route path="/login" element={<LoginPage />} />
       <Route path="/reset-password" element={<ResetPasswordPage />} />
       <Route path="/case-detail" element={<CaseDetailPage />} />
+      <Route path="/auth/callback" element={<AuthCallbackPage />} />
+
+      {/* Legal Pages */}
+      <Route path="/legal/terms" element={<TermsOfService />} />
+      <Route path="/legal/privacy" element={<PrivacyPolicy />} />
+      <Route path="/legal/cookies" element={<CookiePolicy />} />
+
+      {/* Payment Pages */}
+      <Route path="/payment/success" element={<PaymentSuccessPage />} />
+      <Route path="/payment/fail" element={<PaymentFailPage />} />
 
       {/* Customer Routes */}
       <Route
@@ -128,6 +152,10 @@ function AppRoutes() {
       <Route
         path="/admin/pdf-preview"
         element={user?.role === "admin" ? <PdfTemplatePreview /> : <Navigate to="/" />}
+      />
+      <Route
+        path="/admin/pricing-samples"
+        element={user?.role === "admin" ? <PricingTierSamples /> : <Navigate to="/" />}
       />
 
       {/* Fallback */}

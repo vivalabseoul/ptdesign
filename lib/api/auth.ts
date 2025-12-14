@@ -10,85 +10,34 @@ export interface UserProfile {
   updated_at?: string
 }
 
-export interface SignUpData {
-  email: string
-  password: string
-  name?: string
-  role?: 'admin' | 'user'
-}
-
-export interface SignInData {
-  email: string
-  password: string
-}
-
 /**
- * 회원가입
+ * 구글 로그인
  */
-export async function signUp(data: SignUpData): Promise<UserProfile> {
-  // 1. Supabase Auth에 사용자 등록
-  const { data: authData, error: authError } = await supabase.auth.signUp({
-    email: data.email,
-    password: data.password,
+export async function signInWithGoogle() {
+  const { data, error } = await supabase.auth.signInWithOAuth({
+    provider: 'google',
     options: {
-      data: {
-        role: data.role || 'user',
-      },
+      redirectTo: `${window.location.origin}/auth/callback`,
     },
   })
-
-  if (authError) throw authError
-  if (!authData.user) throw new Error('회원가입에 실패했습니다.')
-
-  // 2. users 테이블에서 프로필 정보 가져오기
-  // (트리거가 자동으로 프로필을 생성함)
-  const { data: profile, error: profileError } = await supabase
-    .from('users')
-    .select('*')
-    .eq('id', authData.user.id)
-    .single()
-
-  if (profileError) {
-    // 프로필이 아직 생성되지 않았을 수 있으므로 재시도
-    await new Promise(resolve => setTimeout(resolve, 500))
-    
-    const { data: retryProfile, error: retryError } = await supabase
-      .from('users')
-      .select('*')
-      .eq('id', authData.user.id)
-      .single()
-    
-    if (retryError) throw retryError
-    return retryProfile as UserProfile
-  }
-
-  return profile as UserProfile
+  
+  if (error) throw error
+  return data
 }
 
 /**
- * 로그인
+ * 카카오 로그인
  */
-export async function signIn(data: SignInData): Promise<UserProfile> {
-  // 1. Supabase Auth로 로그인
-  const { data: authData, error: authError } = await supabase.auth.signInWithPassword({
-    email: data.email,
-    password: data.password,
+export async function signInWithKakao() {
+  const { data, error } = await supabase.auth.signInWithOAuth({
+    provider: 'kakao',
+    options: {
+      redirectTo: `${window.location.origin}/auth/callback`,
+    },
   })
-
-  if (authError) throw authError
-  if (!authData.user) throw new Error('로그인에 실패했습니다.')
-
-  // 2. users 테이블에서 프로필 정보 가져오기
-  const { data: profile, error: profileError } = await supabase
-    .from('users')
-    .select('*')
-    .eq('id', authData.user.id)
-    .single()
-
-  if (profileError) throw profileError
-  if (!profile) throw new Error('사용자 프로필을 찾을 수 없습니다.')
-
-  return profile as UserProfile
+  
+  if (error) throw error
+  return data
 }
 
 /**
@@ -107,33 +56,25 @@ export async function getCurrentUser(): Promise<UserProfile | null> {
   
   if (!session?.user) return null
 
+  // 소셜 로그인은 users 테이블 없이도 작동
+  // 필요시 users 테이블에서 추가 정보 가져오기
   const { data: profile } = await supabase
     .from('users')
     .select('*')
     .eq('id', session.user.id)
     .single()
 
-  return profile as UserProfile | null
+  // 프로필이 없으면 기본 정보 반환
+  if (!profile) {
+    return {
+      id: session.user.id,
+      email: session.user.email!,
+      role: 'user',
+      subscription_status: 'inactive',
+      subscription_plan: 'free',
+    }
+  }
+
+  return profile as UserProfile
 }
 
-/**
- * 비밀번호 재설정 이메일 전송
- */
-export async function sendPasswordResetEmail(email: string): Promise<void> {
-  const { error } = await supabase.auth.resetPasswordForEmail(email, {
-    redirectTo: `${window.location.origin}/reset-password`,
-  })
-  
-  if (error) throw error
-}
-
-/**
- * 비밀번호 업데이트
- */
-export async function updatePassword(newPassword: string): Promise<void> {
-  const { error } = await supabase.auth.updateUser({
-    password: newPassword,
-  })
-  
-  if (error) throw error
-}

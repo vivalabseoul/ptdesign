@@ -163,7 +163,7 @@ export function PortfolioPage() {
                 className="inline-flex items-center justify-center px-8 py-4 rounded-xl text-white font-bold text-lg transition-all hover:scale-105 hover:shadow-[0_0_30px_rgba(238,108,77,0.5)]"
                 style={{ background: 'var(--accent)' }}
               >
-                무료 진단 시작하기
+                상담 신청하기
               </a>
             </div>
           </div>

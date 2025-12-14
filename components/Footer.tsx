@@ -1,10 +1,7 @@
 import { Mail, Facebook, Twitter, Instagram, Linkedin } from "lucide-react";
 import { Link } from "react-router-dom";
-import { useAuth } from "../contexts/AuthContext";
 
 export function Footer() {
-  const { openAuthModal } = useAuth();
-
   return (
     <footer style={{ background: 'var(--primary)' }}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-16 pb-8">
@@ -44,18 +41,18 @@ export function Footer() {
                 <Link to="/about" className="hover:text-[var(--accent)] transition-colors">
                   회사소개
                 </Link>
-                <Link to="/portfolio" className="hover:text-[var(--accent)] transition-colors">
+                {/* <Link to="/portfolio" className="hover:text-[var(--accent)] transition-colors">
                   포트폴리오
-                </Link>
-                <a href="#" className="hover:text-[var(--accent)] transition-colors">
+                </Link> */}
+                <Link to="/legal/terms" className="hover:text-[var(--accent)] transition-colors">
                   이용약관
-                </a>
-                <a href="#" className="hover:text-[var(--accent)] transition-colors">
+                </Link>
+                <Link to="/legal/privacy" className="hover:text-[var(--accent)] transition-colors">
                   개인정보처리방침
-                </a>
-                <a href="#" className="hover:text-[var(--accent)] transition-colors">
-                  쿠키 설정
-                </a>
+                </Link>
+                <Link to="/legal/cookies" className="hover:text-[var(--accent)] transition-colors">
+                  쿠키 정책
+                </Link>
               </div>
               {/* SNS Icons */}
               <div className="flex gap-3">

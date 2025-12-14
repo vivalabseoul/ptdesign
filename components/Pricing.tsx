@@ -1,59 +1,14 @@
 import { Check, ArrowRight } from "lucide-react";
 import { useAuth } from "../contexts/AuthContext";
+import { useLanguage } from "../contexts/LanguageContext";
+import { pricingTranslations } from "../translations/pricing";
 
 export function Pricing() {
   const { openAuthModal } = useAuth();
-
-  const plans = [
-    {
-      id: "micro-snap",
-      name: "마이크로 스냅",
-      price: "29,000",
-      desc: "첫 화면만 빠르게 개선",
-      usp: "24시간 내 납품",
-      features: [
-        "1 URL, 퍼스트 스크린 한정",
-        "정량 점수 + 프롬프트 3종",
-        "미니 CSS 토큰 제공",
-        "PDF 1장 + TXT 납품"
-      ],
-      badge: "추천",
-      badgeColor: "bg-[var(--secondary)]",
-      highlight: false,
-    },
-    {
-      id: "snap",
-      name: "스냅 (Entry)",
-      price: "99,000",
-      desc: "가성비 진단으로 이슈 파악",
-      usp: "가성비 진단으로 이슈를 빠르게 파악",
-      features: [
-        "1페이지 전체 스냅 진단",
-        "개선 프롬프트 5종",
-        "상세 체크리스트 포함",
-        "PDF 또는 Notion 납품"
-      ],
-      badge: "POPULAR",
-      badgeColor: "bg-[var(--accent)]",
-      highlight: true, // 중앙 카드 강조
-    },
-    {
-      id: "cvr-booster",
-      name: "CVR 부스터",
-      price: "299,000",
-      desc: "바로 테스트 가능한 AB 레디 팩",
-      usp: "바로 테스트 가능한 AB 레디 팩",
-      features: [
-        "심층 분석 + A/B 카피 3세트",
-        "이미지 프롬프트 5종",
-        "전체 CSS 토큰 가이드",
-        "PDF/Notion/JSON 납품"
-      ],
-      badge: "베스트",
-      badgeColor: "bg-gray-900",
-      highlight: false,
-    },
-  ];
+  const { language } = useLanguage();
+  
+  const t = pricingTranslations[language];
+  const plans = t.plans;
 
   return (
     <section id="pricing" className="relative py-32 overflow-hidden" style={{ background: "#0a0a0a" }}>
@@ -84,7 +39,7 @@ export function Pricing() {
         </div>
 
         {/* Pricing Cards */}
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8 mb-20 items-center justify-center max-w-6xl mx-auto">
+        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8 mb-20 items-stretch justify-center max-w-7xl mx-auto">
           {plans.map((plan) => (
             <div
               key={plan.id}
@@ -106,11 +61,7 @@ export function Pricing() {
               {plan.badge && (
                 <div className="absolute -top-4 left-1/2 -translate-x-1/2 z-20">
                   <span 
-                    className={`px-4 py-1.5 rounded-full text-xs font-bold tracking-wider uppercase shadow-lg border border-white/10 ${
-                      plan.highlight 
-                        ? "bg-[var(--accent)] text-white" 
-                        : (plan.badge === "추천" ? "bg-[var(--secondary)] text-white" : "bg-white text-black")
-                    }`}
+                    className={`px-4 py-1.5 rounded-full text-xs font-bold tracking-wider uppercase shadow-lg border border-white/10 text-white ${plan.badgeColor}`}
                   >
                     {plan.badge}
                   </span>
@@ -176,7 +127,7 @@ export function Pricing() {
               </p>
               <p className="flex items-start gap-2">
                 <span className="text-[var(--accent)]">•</span>
-                <span><strong>납기 기준:</strong> 마이크로 스냅은 24시간 내, 그 외 상품은 영업일 기준 72시간 내 납품됩니다.</span>
+                <span><strong>납기 기준:</strong> 퀵 스캔은 4시간 내, 마이크로 분석은 24시간 내, 그 외 상품은 영업일 기준 72시간 내 납품됩니다.</span>
               </p>
               <p className="flex items-start gap-2">
                 <span className="text-[var(--accent)]">•</span>

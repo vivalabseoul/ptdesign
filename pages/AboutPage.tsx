@@ -47,34 +47,26 @@ export function AboutPage() {
     <div className="min-h-screen" style={{ background: "var(--primary)" }}>
       <Navigation />
 
-      {/* Hero */}
-      <section className="relative overflow-hidden">
-        {/* Video Background */}
-        <video
-          autoPlay
-          loop
-          muted
-          playsInline
-          className="absolute inset-0 w-full h-full object-cover"
-        >
-          <source src="/designers.mp4" type="video/mp4" />
-        </video>
-        
-        {/* Dark Overlay */}
-        <div className="absolute inset-0 bg-black/75" />
-        
-        {/* Content */}
-        <div className="relative z-10 px-4 sm:px-6 lg:px-8" style={{ paddingTop: "20rem", paddingBottom: "15rem" }}>
-        <div className="max-w-7xl mx-auto text-center">
-          <h1 className="mb-6 text-white">
-            더 나은 웹 경험을 만들어갑니다
+      {/* Hero Section */}
+      <section className="relative pt-48 pb-32 overflow-hidden">
+        {/* Background Effects */}
+        <div className="absolute top-0 left-1/4 w-[500px] h-[500px] bg-[var(--accent)]/20 rounded-full blur-[120px] -translate-y-1/2 pointer-events-none" />
+        <div className="absolute bottom-0 right-1/4 w-[500px] h-[500px] bg-[var(--secondary)]/10 rounded-full blur-[120px] translate-y-1/2 pointer-events-none" />
+
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center">
+          <span 
+            className="inline-block px-4 py-1.5 rounded-full text-sm font-semibold mb-6 border border-white/10 backdrop-blur-sm"
+            style={{ background: 'rgba(255,255,255,0.05)', color: 'var(--secondary)' }}
+          >
+            About Us
+          </span>
+          <h1 className="text-5xl md:text-7xl font-bold mb-8 tracking-tight leading-tight text-white">
+            더 나은 <span style={{ color: 'var(--accent)' }}>웹 경험</span>을<br />만들어갑니다
           </h1>
-          <p className="text-white/90 text-xl">
-            ProTouchDesign은 AI와 전문가의 협업으로 웹사이트의 UX를 개선하고,
-            <br />
+          <p className="text-xl text-gray-400 max-w-2xl mx-auto leading-relaxed">
+            ProTouchDesign은 AI와 전문가의 협업으로 웹사이트의 UX를 개선하고,<br className="hidden md:block" />
             실제 사용자 경험을 향상시키는 것을 목표로 합니다.
           </p>
-        </div>
         </div>
       </section>
 
