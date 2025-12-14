@@ -41,23 +41,8 @@ export function AuthModal({ isOpen, onClose, initialMode = "login" }: AuthModalP
     setLoading(true);
 
     try {
-      const profile = await login(email, password);
-
-      // 아이디 저장하기 처리
-      if (rememberMe) {
-        localStorage.setItem("rememberedEmail", email);
-      } else {
-        localStorage.removeItem("rememberedEmail");
-      }
-
-      // Redirect based on role
-      if (profile.role === "admin") {
-        navigate("/admin/dashboard");
-      } else if (profile.role === "expert") {
-        navigate("/expert/dashboard");
-      } else {
-        navigate("/customer/dashboard");
-      }
+      // OAuth 로그인으로 리다이렉트
+      navigate("/login");
       onClose();
     } catch (err: any) {
       setError(err.message || "로그인에 실패했습니다.");
@@ -72,15 +57,8 @@ export function AuthModal({ isOpen, onClose, initialMode = "login" }: AuthModalP
     setLoading(true);
 
     try {
-      const profile = await signup(email, password, name, role);
-
-      // 전문가 회원가입인 경우 승인 대기 안내
-      if (role === 'expert') {
-        alert('전문가 회원가입이 완료되었습니다.\n관리자 승인 후 이용 가능합니다.\n승인 결과는 이메일로 안내드립니다.');
-      }
-
-      // 회원가입 후 메인 페이지로 리다이렉트 (저장된 URL 복원을 위해)
-      navigate("/");
+      // OAuth 로그인으로 리다이렉트
+      navigate("/login");
       onClose();
     } catch (err: any) {
       setError(err.message || "회원가입에 실패했습니다.");

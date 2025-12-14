@@ -35,29 +35,9 @@ export function SignupPage() {
     setLoading(true);
 
     try {
-      console.log("회원가입 시도:", {
-        email: formData.email,
-        name: formData.name,
-        role: formData.role,
-      });
-
-      const profile = await signup(
-        formData.email,
-        formData.password,
-        formData.name,
-        formData.role
-      );
-
-      console.log("회원가입 성공:", profile);
-
-      // Redirect based on role
-      if (profile.role === "admin") {
-        navigate("/admin/dashboard");
-      } else if (profile.role === "expert") {
-        navigate("/expert/dashboard");
-      } else {
-        navigate("/customer/dashboard");
-      }
+      // OAuth 로그인으로 리다이렉트
+      // 현재 앱은 OAuth만 지원하므로 로그인 페이지로 이동
+      navigate("/login");
     } catch (err: any) {
       console.error("회원가입 실패:", err);
       setError(err.message || "회원가입에 실패했습니다.");

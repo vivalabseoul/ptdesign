@@ -25,12 +25,8 @@ export function Login() {
     setLoading(true);
 
     try {
-      const { error } = await signIn(email, password);
-      if (error) {
-        setError(error.message || "로그인에 실패했습니다");
-      } else {
-        navigate("/dashboard");
-      }
+      // OAuth 로그인으로 리다이렉트
+      navigate("/login");
     } catch (err) {
       setError("로그인 중 오류가 발생했습니다");
     } finally {

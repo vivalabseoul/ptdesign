@@ -21,6 +21,13 @@ interface AuthContextType {
   isAuthenticated: boolean;
   isAdmin: boolean;
   appUser: UserProfile | null;
+  // Aliases for compatibility
+  login: () => Promise<void>;
+  signup: () => Promise<void>;
+  signIn: () => Promise<void>;
+  signUp: () => Promise<void>;
+  signOut: () => Promise<void>;
+  openAuthModal: (mode?: 'login' | 'signup') => void;
 }
 
 const AuthContext = createContext<AuthContextType>({
@@ -32,6 +39,13 @@ const AuthContext = createContext<AuthContextType>({
   isAuthenticated: false,
   isAdmin: false,
   appUser: null,
+  // Aliases
+  login: async () => {},
+  signup: async () => {},
+  signIn: async () => {},
+  signUp: async () => {},
+  signOut: async () => {},
+  openAuthModal: () => {},
 });
 
 export const useAuth = () => useContext(AuthContext);
@@ -41,7 +55,7 @@ interface AuthProviderProps {
   onOpenAuthModal?: (mode?: 'login' | 'signup') => void;
 }
 
-export function AuthProvider({ children }: AuthProviderProps) {
+export function AuthProvider({ children, onOpenAuthModal }: AuthProviderProps) {
   const [user, setUser] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -119,6 +133,13 @@ export function AuthProvider({ children }: AuthProviderProps) {
     isAuthenticated: !!user,
     isAdmin: user?.role === 'admin',
     appUser: user,
+    // Method aliases for compatibility
+    login: signInWithGoogle,
+    signup: signInWithGoogle,
+    signIn: signInWithGoogle,
+    signUp: signInWithGoogle,
+    signOut: logout,
+    openAuthModal: onOpenAuthModal || (() => {}),
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

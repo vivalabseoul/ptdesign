@@ -32,12 +32,8 @@ export function SignUp() {
     setLoading(true);
 
     try {
-      const { error } = await signUp(email, password, email.split('@')[0] || 'customer', 'customer');
-      if (error) {
-        setError(error.message || '회원가입에 실패했습니다');
-      } else {
-        navigate('/dashboard');
-      }
+      // OAuth 로그인으로 리다이렉트
+      navigate('/login');
     } catch (err) {
       setError('회원가입 중 오류가 발생했습니다');
     } finally {
