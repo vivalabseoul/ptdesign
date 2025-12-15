@@ -7,12 +7,14 @@ import { useNavigate } from "react-router-dom";
 interface PaymentButtonProps {
   planId: PaymentPlan;
   className?: string;
+  style?: React.CSSProperties;
   children: React.ReactNode;
 }
 
 export function PaymentButton({
   planId,
   className,
+  style,
   children,
 }: PaymentButtonProps) {
   const [loading, setLoading] = useState(false);
@@ -56,7 +58,7 @@ export function PaymentButton({
   };
 
   return (
-    <Button onClick={handleClick} disabled={loading} className={className}>
+    <Button onClick={handleClick} disabled={loading} className={className} style={style}>
       {loading ? "처리 중..." : children}
     </Button>
   );

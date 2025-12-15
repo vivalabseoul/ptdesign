@@ -14,10 +14,10 @@ interface AuthContextType {
   isAdmin: boolean;
   appUser: UserProfile | null;
   // Aliases for compatibility
-  login: () => Promise<void>;
-  signup: () => Promise<void>;
-  signIn: () => Promise<void>;
-  signUp: () => Promise<void>;
+  login: (email: string, password: string) => Promise<void>;
+  signup: (email: string, password: string, name: string) => Promise<void>;
+  signIn: (email: string, password: string) => Promise<void>;
+  signUp: (email: string, password: string, name: string) => Promise<void>;
   signOut: () => Promise<void>;
   openAuthModal: (mode?: 'login' | 'signup') => void;
 }
