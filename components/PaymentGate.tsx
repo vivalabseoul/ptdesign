@@ -89,10 +89,7 @@ export function PaymentGate({ children, showBlur = true }: PaymentGateProps) {
             <CardContent className="space-y-4 pb-4">
               <div className="bg-orange-50 border border-orange-200 rounded-lg p-4">
                 <p className="text-sm text-orange-900">
-                  💡 <strong>무료 회원</strong>은 심각도분포까지 무료로 확인할
-                  수 있습니다.
-                  <br />
-                  SEO 및 전체 분석 결과와 상세 보고서를 보려면 결제가
+                  💡 SEO 및 전체 분석 결과와 상세 보고서를 보려면 결제가
                   필요합니다.
                 </p>
               </div>

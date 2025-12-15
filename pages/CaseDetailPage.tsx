@@ -272,7 +272,7 @@ export function CaseDetailPage() {
               className="inline-block px-12 py-5 rounded-2xl text-lg font-bold transition-all hover:shadow-2xl hover:scale-105"
               style={{ background: "var(--accent)", color: "white" }}
             >
-              무료로 분석 시작하기
+              분석 시작하기
             </Link>
           </div>
         </section>

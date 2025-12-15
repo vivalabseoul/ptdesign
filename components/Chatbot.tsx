@@ -69,7 +69,7 @@ export function Chatbot() {
       return "베이직 플랜은 ₩50,000원, 프로 플랜은 ₩120,000원입니다. 자세한 내용은 가격 정책 섹션을 확인해주세요.";
     }
     if (input.includes("분석") || input.includes("analyze")) {
-      return "URL을 입력하시면 AI가 자동으로 UI/UX를 분석하고 개선 보고서를 제공합니다. 홈 페이지에서 무료로 시작하실 수 있습니다.";
+      return "URL을 입력하시면 AI가 자동으로 UI/UX를 분석하고 개선 보고서를 제공합니다. 홈 페이지에서 시작하실 수 있습니다.";
     }
     if (input.includes("결제") || input.includes("payment")) {
       return "결제는 토스페이먼츠를 통해 안전하게 진행됩니다. 결제 관련 문의사항이 있으시면 연락처로 문의해주세요.";

@@ -12,7 +12,7 @@ export function SignUp() {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
-  const { signUp } = useAuth();
+  const { signUpWithEmail } = useAuth();
   const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -32,10 +32,14 @@ export function SignUp() {
     setLoading(true);
 
     try {
-      // OAuth 로그인으로 리다이렉트
-      navigate('/login');
-    } catch (err) {
-      setError('회원가입 중 오류가 발생했습니다');
+      // Note: This component collects phone but signUpWithEmail expects name
+      // We'll use email as name for now since this component doesn't have a name field
+      await signUpWithEmail(email, password, email);
+      alert('회원가입이 완료되었습니다!');
+      navigate('/customer/dashboard');
+    } catch (err: any) {
+      console.error('회원가입 실패:', err);
+      setError(err.message || '회원가입 중 오류가 발생했습니다');
     } finally {
       setLoading(false);
     }

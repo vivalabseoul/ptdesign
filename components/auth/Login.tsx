@@ -16,7 +16,7 @@ export function Login() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
-  const { signIn } = useAuth();
+  const { signInWithEmail } = useAuth();
   const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -25,10 +25,11 @@ export function Login() {
     setLoading(true);
 
     try {
-      // OAuth 로그인으로 리다이렉트
-      navigate("/login");
-    } catch (err) {
-      setError("로그인 중 오류가 발생했습니다");
+      await signInWithEmail(email, password);
+      navigate("/customer/dashboard");
+    } catch (err: any) {
+      console.error("로그인 실패:", err);
+      setError(err.message || "로그인 중 오류가 발생했습니다");
     } finally {
       setLoading(false);
     }

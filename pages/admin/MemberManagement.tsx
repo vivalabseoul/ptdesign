@@ -11,7 +11,7 @@ interface Member {
   role: "customer" | "expert" | "admin";
   plan: "Starter" | "Professional" | "Enterprise";
   status: "active" | "inactive" | "trial";
-  approvalStatus?: "pending" | "approved" | "rejected";
+  approvalStatus?: "requested" | "pending" | "approved";
   joinDate: string;
   analysisCount: number;
   lastActive: string;
@@ -19,6 +19,7 @@ interface Member {
 
 export function MemberManagement() {
   const navigate = useNavigate();
+  const [memberType, setMemberType] = useState<"customer" | "expert" | "admin">("customer");
   const [searchTerm, setSearchTerm] = useState("");
   const [filterRole, setFilterRole] = useState("all");
   const [filterPlan, setFilterPlan] = useState("all");
@@ -112,11 +113,12 @@ export function MemberManagement() {
       member.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
       member.company.toLowerCase().includes(searchTerm.toLowerCase());
 
+    const matchesType = member.role === memberType;
     const matchesRole = filterRole === "all" || member.role === filterRole;
     const matchesPlan = filterPlan === "all" || member.plan === filterPlan;
     const matchesStatus = filterStatus === "all" || member.status === filterStatus;
 
-    return matchesSearch && matchesRole && matchesPlan && matchesStatus;
+    return matchesSearch && matchesType && matchesRole && matchesPlan && matchesStatus;
   });
 
   const getRoleColor = (role: string) => {
@@ -175,18 +177,18 @@ export function MemberManagement() {
 
   const getApprovalStatusLabel = (status?: string) => {
     switch (status) {
+      case "requested": return "승인요청";
       case "pending": return "승인대기";
       case "approved": return "승인완료";
-      case "rejected": return "거부됨";
       default: return "-";
     }
   };
 
   const getApprovalStatusColor = (status?: string) => {
     switch (status) {
+      case "requested": return "#3B82F6"; // Blue
       case "pending": return "#F59E0B"; // Amber
       case "approved": return "var(--success)";
-      case "rejected": return "#EF4444"; // Red
       default: return "#6B7280";
     }
   };
@@ -269,6 +271,43 @@ export function MemberManagement() {
               </p>
             </div>
           </div>
+        </div>
+
+        {/* Member Type Tabs */}
+        <div className="flex gap-2 mb-6">
+          <button
+            onClick={() => setMemberType("customer")}
+            className={`flex-1 py-3 rounded-xl font-semibold transition-all ${
+              memberType === "customer"
+                ? "text-white shadow-lg"
+                : "bg-white text-gray-700 hover:bg-gray-50"
+            }`}
+            style={memberType === "customer" ? { background: "#3B82F6" } : {}}
+          >
+            고객
+          </button>
+          <button
+            onClick={() => setMemberType("expert")}
+            className={`flex-1 py-3 rounded-xl font-semibold transition-all ${
+              memberType === "expert"
+                ? "text-white shadow-lg"
+                : "bg-white text-gray-700 hover:bg-gray-50"
+            }`}
+            style={memberType === "expert" ? { background: "#8B5CF6" } : {}}
+          >
+            전문가
+          </button>
+          <button
+            onClick={() => setMemberType("admin")}
+            className={`flex-1 py-3 rounded-xl font-semibold transition-all ${
+              memberType === "admin"
+                ? "text-white shadow-lg"
+                : "bg-white text-gray-700 hover:bg-gray-50"
+            }`}
+            style={memberType === "admin" ? { background: "#EF4444" } : {}}
+          >
+            관리자
+          </button>
         </div>
 
         {/* Filters */}

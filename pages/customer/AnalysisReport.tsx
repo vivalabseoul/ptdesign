@@ -436,6 +436,7 @@ export function AnalysisReport() {
                   <Copy className="w-4 lg:w-5 h-4 lg:h-5" />
                   지침서 복사
                 </button>
+                {/* PDF 다운로드 버튼 - 서비스 준비 중으로 임시 숨김
                 <button
                   onClick={handleDownloadPDF}
                   disabled={isGeneratingPDF}
@@ -445,6 +446,7 @@ export function AnalysisReport() {
                   <Download className={`w-4 lg:w-5 h-4 lg:h-5 ${isGeneratingPDF ? 'animate-spin' : ''}`} />
                   {isGeneratingPDF ? "생성 중..." : "종합분석 다운로드"}
                 </button>
+                */}
               </div>
             </div>
           </div>

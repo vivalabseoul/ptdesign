@@ -142,10 +142,10 @@ export function AuthProvider({ children, onOpenAuthModal }: AuthProviderProps) {
     isAdmin: user?.role === 'admin',
     appUser: user,
     // Method aliases for compatibility
-    login: signInWithGoogle,
-    signup: signInWithGoogle,
-    signIn: signInWithGoogle,
-    signUp: signInWithGoogle,
+    login: signInWithEmail,
+    signup: signUpWithEmail,
+    signIn: signInWithEmail,
+    signUp: signUpWithEmail,
     signOut: logout,
     openAuthModal: onOpenAuthModal || (() => {}),
   };
