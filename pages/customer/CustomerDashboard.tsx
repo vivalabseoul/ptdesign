@@ -124,26 +124,33 @@ export function CustomerDashboard() {
 
   const performAnalysis = async (urlToAnalyze?: string) => {
     if (!user) return;
-    
+
     // URL 파라미터가 있으면 사용, 없으면 state의 newUrl 사용
     const targetUrl = urlToAnalyze || newUrl;
-    
+
     try {
+      console.log("Starting analysis for URL:", targetUrl);
+
       // 1. 프로젝트 생성
       const project = await createAnalysis(user.id, targetUrl);
-      
+      console.log("Project created:", project.id);
+
       // 2. OpenAI 분석 수행
       const reportData = await analyzeWebsite(targetUrl);
-      
+      console.log("Analysis completed, report data:", reportData);
+
       // 3. 결과 저장
       await saveAnalysisReport(project.id, reportData);
-      
+      console.log("Report saved successfully");
+
       // 4. 완료 처리
       await updateProjectStatus(project.id, 'completed');
+      console.log("Project status updated to completed");
 
       // 5. 완료 상태 업데이트 및 프로젝트 ID 저장
       setCompletedProjectId(project.id);
       setAnalysisComplete(true);
+      console.log("Analysis complete, will navigate to:", `/customer/report/${project.id}`);
     } catch (error: any) {
       console.error("분석 요청 실패:", error);
       setError(error.message || "알 수 없는 오류가 발생했습니다.");

@@ -14,6 +14,8 @@ import {
   Clock,
   FileText,
   Link as LinkIcon,
+  UserX,
+  AlertTriangle,
 } from "lucide-react";
 
 interface Member {
@@ -42,6 +44,8 @@ export function MemberDetail() {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState<"customer" | "expert" | "admin">("customer");
   const [approvalStatus, setApprovalStatus] = useState<"pending" | "approved" | "rejected">("pending");
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [deleteConfirmText, setDeleteConfirmText] = useState("");
 
   // Mock data - 실제로는 API에서 가져옴
   const member: Member = {
@@ -68,6 +72,25 @@ export function MemberDetail() {
     setApprovalStatus(newStatus);
     // TODO: API 호출
     console.log(`Approval status changed to: ${newStatus}`);
+  };
+
+  const handleDeleteMember = async () => {
+    if (deleteConfirmText !== member.email) {
+      alert("이메일 주소가 일치하지 않습니다.");
+      return;
+    }
+
+    try {
+      // TODO: API 호출
+      console.log(`Deleting member: ${member.id}`);
+      // await deleteMember(member.id);
+
+      alert(`회원 ${member.name}(${member.email})이 성공적으로 탈퇴 처리되었습니다.`);
+      navigate("/admin/members");
+    } catch (error) {
+      console.error("회원 탈퇴 처리 실패:", error);
+      alert("회원 탈퇴 처리 중 오류가 발생했습니다.");
+    }
   };
 
   const getRoleColor = (role: string) => {
@@ -200,6 +223,17 @@ export function MemberDetail() {
                 </span>
               </div>
             )}
+          </div>
+
+          {/* Action Buttons */}
+          <div className="mt-6 pt-6 border-t border-gray-200 flex items-center justify-end gap-3">
+            <button
+              onClick={() => setShowDeleteModal(true)}
+              className="flex items-center gap-2 px-6 py-3 rounded-xl border-2 border-red-200 text-red-600 font-semibold hover:bg-red-50 transition-all"
+            >
+              <UserX className="w-5 h-5" />
+              회원 강제탈퇴
+            </button>
           </div>
         </div>
 
@@ -387,6 +421,67 @@ export function MemberDetail() {
             )}
           </div>
         </div>
+
+        {/* Delete Confirmation Modal */}
+        {showDeleteModal && (
+          <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+            <div className="bg-white rounded-2xl p-8 max-w-md w-full shadow-2xl">
+              <div className="flex items-center gap-3 mb-6">
+                <div className="w-12 h-12 rounded-full bg-red-100 flex items-center justify-center">
+                  <AlertTriangle className="w-6 h-6 text-red-600" />
+                </div>
+                <div>
+                  <h3 className="text-xl font-bold text-gray-900">회원 강제탈퇴</h3>
+                  <p className="text-sm text-gray-600">이 작업은 되돌릴 수 없습니다</p>
+                </div>
+              </div>
+
+              <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-xl">
+                <p className="text-sm text-red-800 mb-2">
+                  <strong>{member.name}({member.email})</strong> 회원을 강제탈퇴 처리합니다.
+                </p>
+                <ul className="text-sm text-red-700 space-y-1 ml-4 list-disc">
+                  <li>모든 회원 데이터가 삭제됩니다</li>
+                  <li>진행 중인 프로젝트가 취소됩니다</li>
+                  <li>결제 정보가 삭제됩니다</li>
+                  <li>이 작업은 되돌릴 수 없습니다</li>
+                </ul>
+              </div>
+
+              <div className="mb-6">
+                <label className="block text-sm font-semibold mb-2 text-gray-900">
+                  확인을 위해 회원의 이메일 주소를 입력하세요:
+                </label>
+                <input
+                  type="text"
+                  value={deleteConfirmText}
+                  onChange={(e) => setDeleteConfirmText(e.target.value)}
+                  placeholder={member.email}
+                  className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-red-500 outline-none"
+                />
+              </div>
+
+              <div className="flex gap-3">
+                <button
+                  onClick={() => {
+                    setShowDeleteModal(false);
+                    setDeleteConfirmText("");
+                  }}
+                  className="flex-1 px-6 py-3 rounded-xl border-2 border-gray-300 font-semibold hover:bg-gray-50 transition-all"
+                >
+                  취소
+                </button>
+                <button
+                  onClick={handleDeleteMember}
+                  disabled={deleteConfirmText !== member.email}
+                  className="flex-1 px-6 py-3 rounded-xl bg-red-600 text-white font-semibold hover:bg-red-700 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  탈퇴 처리
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </DashboardLayout>
   );

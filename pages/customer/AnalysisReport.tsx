@@ -83,10 +83,17 @@ export function AnalysisReport() {
 
   useEffect(() => {
     async function loadReport() {
-      if (!id) return;
+      if (!id) {
+        console.error("No report ID provided");
+        setLoading(false);
+        return;
+      }
       try {
+        console.log("Loading report for ID:", id);
         const project = await getAnalysisById(id);
+        console.log("Project loaded:", project);
         const data = await getAnalysisReport(id);
+        console.log("Report data loaded:", data);
 
         if (data && data.report_data) {
           setReportData({
@@ -95,6 +102,9 @@ export function AnalysisReport() {
             analyzedAt: new Date(project.created_at).toLocaleDateString(),
             analyst: "AI Analysis Engine",
           });
+          console.log("Report data set successfully");
+        } else {
+          console.error("No report_data found in response:", data);
         }
       } catch (e) {
         console.error("Failed to load report:", e);

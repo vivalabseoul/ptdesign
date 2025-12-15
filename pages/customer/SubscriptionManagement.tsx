@@ -266,7 +266,7 @@ export function SubscriptionManagement() {
               <ul className="space-y-1 text-sm text-blue-800">
                 <li>• 플랜은 분석 1건당 결제 방식입니다.</li>
                 <li>• 결제 후 24-72시간 내에 분석 리포트가 발송됩니다.</li>
-                <li>• 환불 정책: 단순 변심 환불 대신 대체 프롬프트 2종을 무상 제공합니다.</li>
+                <li>• 환불은 제공하지 않습니다. 결제 전 충분히 검토하신 후 구매를 진행해 주시기 바랍니다.</li>
                 <li>• 문의사항이 있으시면 고객지원팀으로 연락주세요.</li>
               </ul>
             </div>
