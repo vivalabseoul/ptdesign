@@ -1,17 +1,39 @@
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../contexts/AuthContext';
 
 export function AuthCallbackPage() {
   const navigate = useNavigate();
+  const { user, loading } = useAuth();
 
   useEffect(() => {
-    // OAuth 콜백 후 대시보드로 리다이렉트
+    // 로딩이 완료될 때까지 대기
+    if (loading) return;
+
+    // OAuth 콜백 후 사용자 역할에 따라 대시보드로 리다이렉트
     const timer = setTimeout(() => {
-      navigate('/dashboard');
+      if (user) {
+        // 사용자 역할에 따른 리다이렉트
+        switch (user.role) {
+          case 'admin':
+            navigate('/admin/dashboard');
+            break;
+          case 'expert':
+            navigate('/expert/dashboard');
+            break;
+          case 'customer':
+          default:
+            navigate('/customer/dashboard');
+            break;
+        }
+      } else {
+        // 사용자 정보가 없으면 홈으로
+        navigate('/');
+      }
     }, 1000);
 
     return () => clearTimeout(timer);
-  }, [navigate]);
+  }, [navigate, user, loading]);
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-purple-50">

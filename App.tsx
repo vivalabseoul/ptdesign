@@ -28,6 +28,8 @@ import { PaymentFailPage } from "./pages/payment/PaymentFailPage";
 // Customer Pages
 import { CustomerDashboard } from "./pages/customer/CustomerDashboard";
 import { AnalysisReport } from "./pages/customer/AnalysisReport";
+import { PaymentHistory } from "./pages/customer/PaymentHistory";
+import { SubscriptionManagement } from "./pages/customer/SubscriptionManagement";
 
 // Expert Pages
 import { ExpertDashboard } from "./pages/expert/ExpertDashboard";
@@ -119,6 +121,14 @@ function AppRoutes() {
       <Route
         path="/customer/analysis-report"
         element={<AnalysisReport />}
+      />
+      <Route
+        path="/customer/payment-history"
+        element={user?.role === "customer" || user?.role === "admin" ? <PaymentHistory /> : <Navigate to="/" />}
+      />
+      <Route
+        path="/customer/subscription"
+        element={user?.role === "customer" || user?.role === "admin" ? <SubscriptionManagement /> : <Navigate to="/" />}
       />
 
       {/* Expert Routes */}

@@ -13,6 +13,8 @@ import {
   BarChart3,
   Eye,
   Activity,
+  CreditCard,
+  Crown,
 } from "lucide-react";
 import { Footer } from "./Footer";
 
@@ -49,6 +51,8 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
       return [
         { icon: LayoutDashboard, label: "대시보드", path: "/customer/dashboard" },
         { icon: BarChart3, label: "분석 내역", path: "/customer/history" },
+        { icon: Crown, label: "구독 관리", path: "/customer/subscription" },
+        { icon: CreditCard, label: "결제 내역", path: "/customer/payment-history" },
       ];
     }
   };

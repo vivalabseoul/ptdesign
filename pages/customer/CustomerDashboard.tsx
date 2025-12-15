@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../contexts/AuthContext";
 import { analyzeWebsite } from "../../lib/gemini";
-import { Plus, Search, BarChart3, Clock, CheckCircle, TrendingUp, Trash2, ExternalLink } from "lucide-react";
+import { Plus, Search, BarChart3, Clock, CheckCircle, TrendingUp, Trash2, ExternalLink, CreditCard, Crown, Calendar, Zap } from "lucide-react";
 import {
   getUserAnalyses,
   createAnalysis,
@@ -287,6 +287,101 @@ export function CustomerDashboard() {
               </div>
             );
           })}
+        </div>
+
+        {/* Subscription Status */}
+        <div className="bg-gradient-to-br from-white to-gray-50 rounded-2xl shadow-lg mb-8 overflow-hidden border border-gray-200">
+          <div className="p-6 border-b border-gray-200 bg-white">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="w-12 h-12 rounded-xl flex items-center justify-center" style={{ background: 'var(--accent)15' }}>
+                  <Crown className="w-6 h-6" style={{ color: 'var(--accent)' }} />
+                </div>
+                <div>
+                  <h3 className="text-lg font-bold" style={{ color: 'var(--primary)' }}>구독 현황</h3>
+                  <p className="text-sm text-gray-600">현재 플랜 및 사용 현황</p>
+                </div>
+              </div>
+              <button
+                onClick={() => navigate('/pricing')}
+                className="px-4 py-2 rounded-lg text-sm font-semibold transition-all hover:shadow-lg"
+                style={{ background: 'var(--accent)', color: 'white' }}
+              >
+                플랜 업그레이드
+              </button>
+            </div>
+          </div>
+
+          <div className="p-6">
+            <div className="grid md:grid-cols-3 gap-6">
+              {/* Current Plan */}
+              <div className="bg-white rounded-xl p-6 border-2 border-gray-200">
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="w-10 h-10 rounded-lg flex items-center justify-center" style={{ background: 'var(--secondary)15' }}>
+                    <Zap className="w-5 h-5" style={{ color: 'var(--secondary)' }} />
+                  </div>
+                  <div>
+                    <p className="text-sm text-gray-600">현재 플랜</p>
+                    <p className="font-bold text-lg" style={{ color: 'var(--primary)' }}>
+                      {user?.subscription_plan === 'free' ? 'Free' : user?.subscription_plan === 'basic' ? '베이직' : user?.subscription_plan === 'pro' ? '프로' : '엔터프라이즈'}
+                    </p>
+                  </div>
+                </div>
+                <div className="flex items-baseline gap-1">
+                  <span className="text-3xl font-bold" style={{ color: 'var(--accent)' }}>
+                    {user?.subscription_plan === 'free' ? '₩0' : user?.subscription_plan === 'basic' ? '₩99K' : user?.subscription_plan === 'pro' ? '₩299K' : '협의'}
+                  </span>
+                  {user?.subscription_plan !== 'free' && user?.subscription_plan !== 'enterprise' && (
+                    <span className="text-sm text-gray-600">/건</span>
+                  )}
+                </div>
+              </div>
+
+              {/* Subscription Status */}
+              <div className="bg-white rounded-xl p-6 border-2 border-gray-200">
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="w-10 h-10 rounded-lg flex items-center justify-center" style={{ background: 'var(--success)15' }}>
+                    <CheckCircle className="w-5 h-5" style={{ color: 'var(--success)' }} />
+                  </div>
+                  <div>
+                    <p className="text-sm text-gray-600">구독 상태</p>
+                    <p className="font-bold text-lg" style={{ color: 'var(--primary)' }}>
+                      {user?.subscription_status === 'active' ? '활성' : user?.subscription_status === 'cancelled' ? '취소됨' : '비활성'}
+                    </p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-2">
+                  <div className={`w-2 h-2 rounded-full ${user?.subscription_status === 'active' ? 'bg-green-500' : 'bg-gray-400'}`}></div>
+                  <span className="text-sm text-gray-600">
+                    {user?.subscription_status === 'active' ? '정상 운영 중' : '구독 필요'}
+                  </span>
+                </div>
+              </div>
+
+              {/* Next Payment */}
+              <div className="bg-white rounded-xl p-6 border-2 border-gray-200">
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="w-10 h-10 rounded-lg flex items-center justify-center" style={{ background: 'var(--warning)15' }}>
+                    <Calendar className="w-5 h-5" style={{ color: 'var(--warning)' }} />
+                  </div>
+                  <div>
+                    <p className="text-sm text-gray-600">다음 결제일</p>
+                    <p className="font-bold text-lg" style={{ color: 'var(--primary)' }}>
+                      {user?.subscription_plan === 'free' ? '-' : '건당 결제'}
+                    </p>
+                  </div>
+                </div>
+                <button
+                  onClick={() => navigate('/customer/payment-history')}
+                  className="text-sm font-semibold flex items-center gap-1 hover:underline"
+                  style={{ color: 'var(--accent)' }}
+                >
+                  <CreditCard className="w-4 h-4" />
+                  결제 내역 보기
+                </button>
+              </div>
+            </div>
+          </div>
         </div>
 
         {/* New Analysis Modal */}
