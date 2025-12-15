@@ -134,11 +134,11 @@ function AppRoutes() {
       {/* Expert Routes */}
       <Route
         path="/expert/dashboard"
-        element={user?.role === "expert" ? <ExpertDashboard /> : <Navigate to="/" />}
+        element={user?.role === "expert" || user?.role === "admin" ? <ExpertDashboard /> : <Navigate to="/" />}
       />
       <Route
         path="/expert/review/:id"
-        element={user?.role === "expert" ? <ExpertReview /> : <Navigate to="/" />}
+        element={user?.role === "expert" || user?.role === "admin" ? <ExpertReview /> : <Navigate to="/" />}
       />
 
       {/* Admin Routes */}
