@@ -2,12 +2,13 @@ import { Navigation } from "../components/Navigation";
 import { Footer } from "../components/Footer";
 import { Check, X } from "lucide-react";
 import { useState } from "react";
-import { Link } from "react-router-dom";
 import { PaymentButton } from "../components/PaymentButton";
 import { PaymentPlan } from "../utils/payment/nicepay";
+import { useAuth } from "../contexts/AuthContext";
 
 export function PricingPage() {
   const [openFaq, setOpenFaq] = useState<number | null>(null);
+  const { openAuthModal } = useAuth();
 
   const plans = [
     {
@@ -383,13 +384,13 @@ export function PricingPage() {
             ProTouchDesign의 전문적인 UX 분석 서비스로<br />
             웹사이트의 성과를 극대화하세요.
           </p>
-          <Link
-            to="/login"
+          <button
+            onClick={() => openAuthModal("signup")}
             className="inline-flex items-center justify-center px-8 py-4 rounded-xl text-white font-bold text-lg transition-all hover:scale-105 hover:shadow-[0_0_30px_rgba(238,108,77,0.5)]"
             style={{ background: 'var(--accent)' }}
           >
             상담 신청하기
-          </Link>
+          </button>
         </div>
       </section>
 

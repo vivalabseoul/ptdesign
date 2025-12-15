@@ -2,7 +2,6 @@ import { useState } from "react";
 import { Button } from "./ui/button";
 import { useAuth } from "../contexts/AuthContext";
 import { requestPayment, PaymentPlan } from "../utils/payment/nicepay";
-import { useNavigate } from "react-router-dom";
 
 interface PaymentButtonProps {
   planId: PaymentPlan;
@@ -18,17 +17,12 @@ export function PaymentButton({
   children,
 }: PaymentButtonProps) {
   const [loading, setLoading] = useState(false);
-  const { user, isAuthenticated } = useAuth();
-  const navigate = useNavigate();
+  const { user, isAuthenticated, openAuthModal } = useAuth();
 
   const handleClick = async () => {
     if (!isAuthenticated) {
-      const confirmed = window.confirm(
-        "결제를 진행하려면 로그인이 필요합니다. 로그인 페이지로 이동하시겠습니까?"
-      );
-      if (confirmed) {
-        navigate("/login");
-      }
+      // 모달로 로그인 유도
+      openAuthModal("login");
       return;
     }
 

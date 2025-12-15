@@ -1,5 +1,6 @@
 import { Navigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
+import { useEffect } from 'react';
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
@@ -7,7 +8,14 @@ interface ProtectedRouteProps {
 }
 
 export function ProtectedRoute({ children, requireAdmin = false }: ProtectedRouteProps) {
-  const { isAuthenticated, isAdmin, loading } = useAuth();
+  const { isAuthenticated, isAdmin, loading, openAuthModal } = useAuth();
+
+  useEffect(() => {
+    // 로딩이 끝난 후 인증되지 않은 경우 모달 열기
+    if (!loading && !isAuthenticated) {
+      openAuthModal('login');
+    }
+  }, [loading, isAuthenticated, openAuthModal]);
 
   if (loading) {
     return (
@@ -18,13 +26,13 @@ export function ProtectedRoute({ children, requireAdmin = false }: ProtectedRout
   }
 
   if (!isAuthenticated) {
-    return <Navigate to="/login" replace />;
+    // 모달이 열리고 홈으로 리다이렉트
+    return <Navigate to="/" replace />;
   }
 
   if (requireAdmin && !isAdmin) {
-    return <Navigate to="/dashboard" replace />;
+    return <Navigate to="/customer/dashboard" replace />;
   }
 
   return <>{children}</>;
 }
-

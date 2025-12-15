@@ -110,8 +110,12 @@ export function AuthProvider({ children, onOpenAuthModal }: AuthProviderProps) {
   // 이메일 회원가입
   const signUpWithEmail = async (email: string, password: string, name: string) => {
     try {
-      await authApi.signUpWithEmail(email, password, name);
-      // 회원가입 후 자동 로그인은 하지 않음 (이메일 인증 필요할 수 있음)
+      const data = await authApi.signUpWithEmail(email, password, name);
+      // 회원가입 후 자동 로그인
+      if (data.user) {
+        const currentUser = await authApi.getCurrentUser();
+        setUser(currentUser);
+      }
     } catch (error) {
       console.error('이메일 회원가입 실패:', error);
       throw error;

@@ -1,14 +1,12 @@
 import { useState, useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { Menu, X } from "lucide-react";
 import { useAuth } from "../contexts/AuthContext";
-import { LanguageToggle } from "./LanguageToggle";
 
 export function Navigation() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
-  const { user } = useAuth();
-  const navigate = useNavigate();
+  const { user, openAuthModal } = useAuth();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -19,12 +17,9 @@ export function Navigation() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  const scrollToSection = (id: string) => {
-    const element = document.getElementById(id);
-    if (element) {
-      element.scrollIntoView({ behavior: "smooth" });
-      setIsMenuOpen(false);
-    }
+  const handleLoginClick = () => {
+    setIsMenuOpen(false);
+    openAuthModal("login");
   };
 
   return (
@@ -54,35 +49,28 @@ export function Navigation() {
             >
               회사소개
             </Link>
-            {/* <Link
-              to="/portfolio"
-              className="px-4 py-2 text-white hover:text-[var(--accent)] transition-colors"
-            >
-              포트폴리오
-            </Link> */}
             <Link
               to="/pricing"
               className="px-4 py-2 text-white hover:text-[var(--accent)] transition-colors"
             >
               요금제
             </Link>
-            {/* <LanguageToggle /> */}
             {user ? (
               <Link
                 to={user.role === 'expert' ? '/expert/dashboard' : user.role === 'admin' ? '/admin/dashboard' : '/customer/dashboard'}
                 className="px-6 py-2.5 rounded-lg transition-all hover:shadow-lg hover:opacity-90"
                 style={{ background: '#EE6C4D', color: 'white' }}
               >
-                대시보드
+                {user.role === 'admin' || user.role === 'expert' ? '대시보드' : '마이페이지'}
               </Link>
             ) : (
-              <Link
-                to="/login"
+              <button
+                onClick={handleLoginClick}
                 className="px-6 py-2.5 rounded-lg transition-all hover:shadow-lg hover:opacity-90"
                 style={{ background: '#EE6C4D', color: 'white' }}
               >
                 로그인
-              </Link>
+              </button>
             )}
           </div>
 
@@ -111,13 +99,6 @@ export function Navigation() {
             >
               회사소개
             </Link>
-            {/* <Link
-              to="/portfolio"
-              onClick={() => setIsMenuOpen(false)}
-              className="block w-full text-left py-2 text-white"
-            >
-              포트폴리오
-            </Link> */}
             <Link
               to="/pricing"
               onClick={() => setIsMenuOpen(false)}
@@ -131,17 +112,16 @@ export function Navigation() {
                 className="block w-full text-center px-6 py-2.5 rounded-lg"
                 style={{ background: '#EE6C4D', color: 'white' }}
               >
-                대시보드
+                {user.role === 'admin' || user.role === 'expert' ? '대시보드' : '마이페이지'}
               </Link>
             ) : (
-              <Link
-                to="/login"
-                onClick={() => setIsMenuOpen(false)}
+              <button
+                onClick={handleLoginClick}
                 className="block w-full text-center px-6 py-2.5 rounded-lg"
                 style={{ background: '#EE6C4D', color: 'white' }}
               >
                 로그인
-              </Link>
+              </button>
             )}
           </div>
         </div>
