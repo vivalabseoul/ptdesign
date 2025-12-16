@@ -3,7 +3,7 @@
  * 한국 시장에 최적화된 결제 처리
  */
 
-export type PaymentPlan = 'free' | 'basic' | 'pro' | 'enterprise';
+export type PaymentPlan = 'guest' | 'basic' | 'pro' | 'enterprise';
 
 export interface PaymentPlanConfig {
   id: PaymentPlan;
@@ -16,8 +16,8 @@ export interface PaymentPlanConfig {
 // 결제 플랜 설정
 export const paymentPlans: PaymentPlanConfig[] = [
   {
-    id: 'free',
-    name: 'Free',
+    id: 'guest',
+    name: 'Guest',
     price: 0,
     currency: 'KRW',
     features: [
@@ -80,32 +80,38 @@ export const requestPayment = async (
   userEmail: string
 ): Promise<{ success: boolean; error?: string }> => {
   try {
+    console.log("💰 requestPayment 호출됨:", { planId, userId, userName, userEmail });
+
     const plan = paymentPlans.find((p) => p.id === planId);
+    console.log("💰 선택된 플랜:", plan);
+
     if (!plan || plan.price === 0) {
+      console.log("💰 유효하지 않은 플랜");
       return { success: false, error: 'Invalid plan' };
     }
 
     // 나이스페이는 MID(가맹점 ID)만 필수로 사용
     const merchantId = import.meta.env.VITE_NICEPAY_MERCHANT_ID;
-    
-    // 개발 모드: MID가 없으면 개발 모드로 처리
-    if (!merchantId) {
-      if (import.meta.env.DEV) {
-        console.warn('⚠️ 개발 모드: 나이스페이 가맹점 ID가 없습니다.');
-        console.warn('⚠️ 실제 결제를 테스트하려면 .env 파일에 VITE_NICEPAY_MERCHANT_ID를 추가하세요.');
-        
-        // 개발 모드에서는 결제 성공 페이지로 바로 이동 (테스트용)
-        const confirmMessage = `[개발 모드] 결제를 시뮬레이션합니다.\n\n플랜: ${plan.name}\n가격: ₩${plan.price.toLocaleString()}\n\n결제 성공 페이지로 이동하시겠습니까?`;
-        if (window.confirm(confirmMessage)) {
-          window.location.href = `/payment/success?planId=${planId}&userId=${userId}&orderId=dev_${Date.now()}`;
-          return { success: true };
-        }
-        return { success: false, error: '결제가 취소되었습니다.' };
-      }
+    console.log("💰 개발 모드:", import.meta.env.DEV);
+    console.log("💰 가맹점 ID:", merchantId ? "있음" : "없음");
+
+    // 개발 모드: 결제 시뮬레이션 (실제 결제 없이 테스트)
+    if (import.meta.env.DEV) {
+      console.log('✅ 개발 모드: 결제 시뮬레이션을 실행합니다.');
+      console.log(`📦 플랜: ${plan.name}, 가격: ₩${plan.price.toLocaleString()}`);
       
-      return { 
-        success: false, 
-        error: '나이스페이 가맹점 ID가 설정되지 않았습니다. .env 파일에 VITE_NICEPAY_MERCHANT_ID를 추가해주세요.' 
+      // 개발 모드에서는 바로 결제 성공 페이지로 이동
+      const successUrl = `/payment/success?planId=${planId}&userId=${userId}&orderId=dev_${Date.now()}`;
+      console.log('💰 결제 성공 페이지로 이동:', successUrl);
+      window.location.href = successUrl;
+      return { success: true };
+    }
+
+    // 프로덕션 모드: 실제 나이스페이 결제
+    if (!merchantId) {
+      return {
+        success: false,
+        error: '나이스페이 가맹점 ID가 설정되지 않았습니다. .env 파일에 VITE_NICEPAY_MERCHANT_ID를 추가해주세요.'
       };
     }
 
@@ -259,7 +265,7 @@ export const updateSubscriptionStatus = async (
       userId,
       planId,
       subscription_status: 'active',
-      subscription_plan: planId === 'free' ? 'free' : planId,
+      subscription_plan: planId === 'guest' ? 'guest' : planId,
     });
 
     // AWS 마이그레이션: RDS PostgreSQL로 대체 필요
@@ -268,7 +274,7 @@ export const updateSubscriptionStatus = async (
       .from('users')
       .update({
         subscription_status: 'active',
-        subscription_plan: planId === 'free' ? 'free' : planId,
+        subscription_plan: planId === 'guest' ? 'guest' : planId,
         updated_at: new Date().toISOString(),
       })
       .eq('id', userId)

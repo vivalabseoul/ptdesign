@@ -14,7 +14,7 @@ import { MenuIcon } from "lucide-react";
 
 export function Navbar() {
   const navigate = useNavigate();
-  const { isAuthenticated, isAdmin, appUser } = useAuth();
+  const { isAuthenticated, isAdmin, appUser, openAuthModal } = useAuth();
   const isMobile = useIsMobile();
   const [sheetOpen, setSheetOpen] = useState(false);
 
@@ -40,7 +40,12 @@ export function Navbar() {
           )}
           <Button
             onClick={() => {
-              navigate("/dashboard");
+              const dashboardPath = appUser?.role === 'expert'
+                ? '/expert/dashboard'
+                : appUser?.role === 'admin'
+                ? '/admin/dashboard'
+                : '/customer/dashboard';
+              navigate(dashboardPath);
               setSheetOpen(false);
             }}
             variant="outline"
@@ -48,24 +53,12 @@ export function Navbar() {
           >
             마이페이지
           </Button>
-          {isAdmin && (
-            <Button
-              onClick={() => {
-                navigate("/admin");
-                setSheetOpen(false);
-              }}
-              variant="outline"
-              className={`btn-admin ${isMobileMenu ? "w-full" : ""}`}
-            >
-              관리자
-            </Button>
-          )}
         </>
       ) : (
         <>
           <Button
             onClick={() => {
-              navigate("/login");
+              openAuthModal("login");
               setSheetOpen(false);
             }}
             variant="outline"
@@ -75,7 +68,7 @@ export function Navbar() {
           </Button>
           <Button
             onClick={() => {
-              navigate("/signup");
+              openAuthModal("signup");
               setSheetOpen(false);
             }}
             variant="outline"

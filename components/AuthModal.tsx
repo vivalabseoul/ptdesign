@@ -44,16 +44,21 @@ export function AuthModal({ isOpen, onClose, initialMode = "login" }: AuthModalP
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    console.log('[AuthModal DEBUG] handleSubmit 호출 - mode:', mode);
     setError(null);
     setLoading(true);
 
     try {
       if (mode === "login") {
+        console.log('[AuthModal DEBUG] 로그인 시도 - email:', formData.email);
         await signInWithEmail(formData.email, formData.password);
+        console.log('[AuthModal DEBUG] 로그인 성공');
         navigate("/customer/dashboard");
         onClose();
       } else {
         // 회원가입
+        console.log('[AuthModal DEBUG] 회원가입 시도 - email:', formData.email, 'name:', formData.name);
+        
         if (formData.password !== formData.confirmPassword) {
           setError("비밀번호가 일치하지 않습니다.");
           setLoading(false);
@@ -65,21 +70,17 @@ export function AuthModal({ isOpen, onClose, initialMode = "login" }: AuthModalP
           return;
         }
 
+        console.log('[AuthModal DEBUG] signUpWithEmail 호출 전');
         await signUpWithEmail(formData.email, formData.password, formData.name);
+        console.log('[AuthModal DEBUG] signUpWithEmail 완료');
         
-        // 자동 로그인 시도
-        try {
-          await signInWithEmail(formData.email, formData.password);
-          navigate("/customer/dashboard");
-          onClose();
-        } catch (loginErr) {
-          // 자동 로그인 실패 시 로그인 모드로 전환
-          setMode("login");
-          setError("회원가입이 완료되었습니다. 로그인해주세요.");
-        }
+        // 회원가입 후 AuthContext에서 이미 사용자가 설정되었으므로 바로 대시보드로 이동
+        console.log('[AuthModal DEBUG] 회원가입 후 대시보드로 이동');
+        navigate("/customer/dashboard");
+        onClose();
       }
     } catch (err: any) {
-      console.error("인증 실패:", err);
+      console.error("[AuthModal DEBUG] 인증 실패:", err);
       setError(err.message || (mode === "login" ? "로그인에 실패했습니다." : "회원가입에 실패했습니다."));
     } finally {
       setLoading(false);
@@ -262,10 +263,14 @@ export function AuthModal({ isOpen, onClose, initialMode = "login" }: AuthModalP
 
             {/* Submit Button */}
             <button
-              type="submit"
+              type="button"
               disabled={loading}
               className="w-full py-3 rounded-lg font-semibold transition-all hover:shadow-lg disabled:opacity-60 disabled:cursor-not-allowed"
               style={{ background: "var(--accent)", color: "white" }}
+              onClick={(e) => {
+                console.log('[AuthModal DEBUG] 버튼 클릭됨! - 직접 handleSubmit 호출');
+                handleSubmit(e as unknown as React.FormEvent);
+              }}
             >
               {loading ? "처리 중..." : mode === "login" ? "로그인" : "회원가입"}
             </button>
@@ -284,7 +289,7 @@ export function AuthModal({ isOpen, onClose, initialMode = "login" }: AuthModalP
           {/* OAuth Buttons */}
           <div className="space-y-3">
             {/* Google */}
-            <button
+            {/* <button
               onClick={handleGoogleLogin}
               type="button"
               className="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-white border-2 border-gray-300 rounded-lg hover:bg-gray-50 hover:border-gray-400 transition-all text-sm"
@@ -308,7 +313,7 @@ export function AuthModal({ isOpen, onClose, initialMode = "login" }: AuthModalP
                 />
               </svg>
               <span className="font-medium text-gray-700">구글로 계속하기</span>
-            </button>
+            </button> */}
 
             {/* Kakao */}
             <button

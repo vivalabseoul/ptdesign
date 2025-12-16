@@ -29,7 +29,7 @@ CREATE TABLE IF NOT EXISTS users (
   email TEXT NOT NULL UNIQUE,
   role TEXT NOT NULL DEFAULT 'user' CHECK (role IN ('admin', 'user')),
   subscription_status TEXT DEFAULT 'inactive' CHECK (subscription_status IN ('active', 'inactive', 'cancelled')),
-  subscription_plan TEXT DEFAULT 'free' CHECK (subscription_plan IN ('free', 'basic', 'pro', 'enterprise')),
+  subscription_plan TEXT DEFAULT 'guest' CHECK (subscription_plan IN ('guest', 'basic', 'pro', 'enterprise')),
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
@@ -170,7 +170,7 @@ END $$;
 CREATE TABLE IF NOT EXISTS payments (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
-  plan_id TEXT NOT NULL CHECK (plan_id IN ('free', 'basic', 'pro', 'enterprise')),
+  plan_id TEXT NOT NULL CHECK (plan_id IN ('guest', 'basic', 'pro', 'enterprise')),
   amount INTEGER NOT NULL,
   currency TEXT NOT NULL DEFAULT 'KRW',
   status TEXT NOT NULL DEFAULT 'pending' CHECK (status IN ('pending', 'completed', 'failed', 'cancelled')),

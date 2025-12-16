@@ -10,8 +10,6 @@ import { AboutPage } from "./pages/AboutPage";
 import { PortfolioPage } from "./pages/PortfolioPage";
 import { PricingPage } from "./pages/PricingPage";
 import { PricingDetailPage } from "./pages/PricingDetailPage";
-import { LoginPage } from "./pages/LoginPage";
-import { SignupPage } from "./pages/SignupPage";
 import { ResetPasswordPage } from "./pages/ResetPasswordPage";
 import { CaseDetailPage } from "./pages/CaseDetailPage";
 import { AuthCallbackPage } from "./pages/AuthCallbackPage";
@@ -74,6 +72,10 @@ function App() {
 function AppRoutes() {
   const { user, loading } = useAuth();
 
+  // 디버깅 로그
+  console.log('[AppRoutes DEBUG] user:', user, 'loading:', loading);
+  console.log('[AppRoutes DEBUG] user?.role:', user?.role);
+
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
@@ -90,8 +92,9 @@ function AppRoutes() {
       <Route path="/portfolio" element={<PortfolioPage />} />
       <Route path="/pricing" element={<PricingPage />} />
       <Route path="/pricing-detail" element={<PricingDetailPage />} />
-      <Route path="/login" element={<LoginPage />} />
-      <Route path="/signup" element={<SignupPage />} />
+      {/* 로그인/회원가입은 AuthModal 사용 */}
+      <Route path="/login" element={<Navigate to="/" />} />
+      <Route path="/signup" element={<Navigate to="/" />} />
       <Route path="/reset-password" element={<ResetPasswordPage />} />
       <Route path="/case-detail" element={<CaseDetailPage />} />
       <Route path="/auth/callback" element={<AuthCallbackPage />} />
@@ -108,15 +111,15 @@ function AppRoutes() {
       {/* Customer Routes */}
       <Route
         path="/customer/dashboard"
-        element={user?.role === "customer" || user?.role === "admin" ? <CustomerDashboard /> : <Navigate to="/" />}
+        element={user?.role === "customer" || user?.role === "user" || user?.role === "admin" ? <CustomerDashboard /> : <Navigate to="/" />}
       />
       <Route
         path="/customer/history"
-        element={user?.role === "customer" || user?.role === "admin" ? <CustomerDashboard /> : <Navigate to="/" />}
+        element={user?.role === "customer" || user?.role === "user" || user?.role === "admin" ? <CustomerDashboard /> : <Navigate to="/" />}
       />
       <Route
         path="/customer/report/:id"
-        element={(user?.role === "customer" || user?.role === "admin") ? <AnalysisReport /> : <Navigate to="/" />}
+        element={(user?.role === "customer" || user?.role === "user" || user?.role === "admin") ? <AnalysisReport /> : <Navigate to="/" />}
       />
       <Route
         path="/customer/analysis-report"
@@ -124,11 +127,11 @@ function AppRoutes() {
       />
       <Route
         path="/customer/payment-history"
-        element={user?.role === "customer" || user?.role === "admin" ? <PaymentHistory /> : <Navigate to="/" />}
+        element={user?.role === "customer" || user?.role === "user" || user?.role === "admin" ? <PaymentHistory /> : <Navigate to="/" />}
       />
       <Route
         path="/customer/subscription"
-        element={user?.role === "customer" || user?.role === "admin" ? <SubscriptionManagement /> : <Navigate to="/" />}
+        element={user?.role === "customer" || user?.role === "user" || user?.role === "admin" ? <SubscriptionManagement /> : <Navigate to="/" />}
       />
 
       {/* Expert Routes */}

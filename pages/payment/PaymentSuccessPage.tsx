@@ -14,12 +14,11 @@ export function PaymentSuccessPage() {
   const userId = searchParams.get('userId');
 
   useEffect(() => {
-    // 5초 후 자동으로 대시보드로 이동
+    // 5초 카운트다운
     const timer = setInterval(() => {
       setCountdown((prev) => {
         if (prev <= 1) {
           clearInterval(timer);
-          navigate('/customer/dashboard');
           return 0;
         }
         return prev - 1;
@@ -27,7 +26,14 @@ export function PaymentSuccessPage() {
     }, 1000);
 
     return () => clearInterval(timer);
-  }, [navigate]);
+  }, []);
+
+  // 카운트다운이 0이 되면 대시보드로 이동
+  useEffect(() => {
+    if (countdown === 0) {
+      navigate('/customer/dashboard');
+    }
+  }, [countdown, navigate]);
 
   return (
     <div className="min-h-screen flex flex-col" style={{ background: 'var(--primary)' }}>

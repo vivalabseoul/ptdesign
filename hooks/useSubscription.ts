@@ -3,7 +3,7 @@ import { useAuth } from '../contexts/AuthContext';
 
 export interface SubscriptionStatus {
   isPaid: boolean;
-  plan: 'free' | 'basic' | 'pro' | 'enterprise';
+  plan: 'guest' | 'basic' | 'pro' | 'enterprise';
   status: 'active' | 'inactive' | 'cancelled';
   loading: boolean;
 }
@@ -15,7 +15,7 @@ export function useSubscription(): SubscriptionStatus {
   const { appUser } = useAuth();
   const [subscription, setSubscription] = useState<SubscriptionStatus>({
     isPaid: false,
-    plan: 'free',
+    plan: 'guest',
     status: 'inactive',
     loading: true,
   });
@@ -25,7 +25,7 @@ export function useSubscription(): SubscriptionStatus {
       if (!appUser) {
         setSubscription({
           isPaid: false,
-          plan: 'free',
+          plan: 'guest',
           status: 'inactive',
           loading: false,
         });
@@ -37,11 +37,11 @@ export function useSubscription(): SubscriptionStatus {
         // 현재는 사용자 프로필의 구독 정보 사용
         const isPaid = 
           appUser.subscription_status === 'active' && 
-          appUser.subscription_plan !== 'free';
+          appUser.subscription_plan !== 'guest';
 
         setSubscription({
           isPaid,
-          plan: (appUser.subscription_plan || 'free') as 'free' | 'basic' | 'pro' | 'enterprise',
+          plan: (appUser.subscription_plan || 'guest') as 'guest' | 'basic' | 'pro' | 'enterprise',
           status: (appUser.subscription_status || 'inactive') as 'active' | 'inactive' | 'cancelled',
           loading: false,
         });
@@ -49,7 +49,7 @@ export function useSubscription(): SubscriptionStatus {
         console.error('Error checking subscription:', error);
         setSubscription({
           isPaid: false,
-          plan: 'free',
+          plan: 'guest',
           status: 'inactive',
           loading: false,
         });

@@ -13,7 +13,7 @@ export const getStripe = () => {
 };
 
 // 결제 플랜 타입
-export type PaymentPlan = 'free' | 'basic' | 'pro' | 'enterprise';
+export type PaymentPlan = 'guest' | 'basic' | 'pro' | 'enterprise';
 
 export interface PaymentPlanConfig {
   id: PaymentPlan;
@@ -27,8 +27,8 @@ export interface PaymentPlanConfig {
 // 결제 플랜 설정
 export const paymentPlans: PaymentPlanConfig[] = [
   {
-    id: 'free',
-    name: 'Free',
+    id: 'guest',
+    name: 'Guest',
     price: 0,
     currency: 'KRW',
     features: [

@@ -25,7 +25,7 @@ export function PaymentGate({ children, showBlur = true }: PaymentGateProps) {
 
   const isPaid =
     appUser?.subscription_status === "active" &&
-    appUser?.subscription_plan !== "free";
+    appUser?.subscription_plan !== "guest";
 
   // 관리자는 항상 모든 콘텐츠를 볼 수 있음
   if (isAdmin || isPaid) {

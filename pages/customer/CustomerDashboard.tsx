@@ -111,8 +111,16 @@ export function CustomerDashboard() {
     }
   };
 
+  const [showUpgradePrompt, setShowUpgradePrompt] = useState(false);
+
   const handleStartAnalysis = async () => {
     if (newUrl && user) {
+      // 결제 내역이 없는 고객인 경우 플랜 업그레이드 안내
+      if (user.subscription_status !== 'active') {
+        setShowUpgradePrompt(true);
+        return;
+      }
+
       setShowNewAnalysis(false);
       setIsAnalyzing(true);
       setAnalysisComplete(false);
@@ -330,15 +338,15 @@ export function CustomerDashboard() {
                   <div>
                     <p className="text-sm text-gray-600">현재 플랜</p>
                     <p className="font-bold text-lg" style={{ color: 'var(--primary)' }}>
-                      {user?.subscription_plan === 'free' ? 'Free' : user?.subscription_plan === 'basic' ? '베이직' : user?.subscription_plan === 'pro' ? '프로' : '엔터프라이즈'}
+                      {user?.subscription_plan === 'guest' ? 'Free' : user?.subscription_plan === 'basic' ? '베이직' : user?.subscription_plan === 'pro' ? '프로' : '엔터프라이즈'}
                     </p>
                   </div>
                 </div>
                 <div className="flex items-baseline gap-1">
                   <span className="text-3xl font-bold" style={{ color: 'var(--accent)' }}>
-                    {user?.subscription_plan === 'free' ? '₩0' : user?.subscription_plan === 'basic' ? '₩99K' : user?.subscription_plan === 'pro' ? '₩299K' : '협의'}
+                    {user?.subscription_plan === 'guest' ? '₩0' : user?.subscription_plan === 'basic' ? '₩99K' : user?.subscription_plan === 'pro' ? '₩299K' : '협의'}
                   </span>
-                  {user?.subscription_plan !== 'free' && user?.subscription_plan !== 'enterprise' && (
+                  {user?.subscription_plan !== 'guest' && user?.subscription_plan !== 'enterprise' && (
                     <span className="text-sm text-gray-600">/건</span>
                   )}
                 </div>
@@ -374,7 +382,7 @@ export function CustomerDashboard() {
                   <div>
                     <p className="text-sm text-gray-600">다음 결제일</p>
                     <p className="font-bold text-lg" style={{ color: 'var(--primary)' }}>
-                      {user?.subscription_plan === 'free' ? '-' : '건당 결제'}
+                      {user?.subscription_plan === 'guest' ? '-' : '건당 결제'}
                     </p>
                   </div>
                 </div>
@@ -432,6 +440,44 @@ export function CustomerDashboard() {
                   style={{ background: 'var(--accent)' }}
                 >
                   분석 시작
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Upgrade Plan Modal */}
+        {showUpgradePrompt && (
+          <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+            <div className="bg-white rounded-2xl p-8 max-w-md w-full shadow-2xl text-center">
+              <div className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-6" style={{ background: 'var(--accent)15' }}>
+                <Crown className="w-8 h-8" style={{ color: 'var(--accent)' }} />
+              </div>
+              <h2 style={{ color: 'var(--primary)' }} className="mb-4">
+                플랜 업그레이드가 필요합니다
+              </h2>
+              <p className="text-gray-600 mb-6">
+                분석 서비스를 이용하려면 플랜을 구매하셔야 합니다.<br />
+                다양한 요금제를 확인하고 최적의 플랜을 선택하세요.
+              </p>
+              
+              <div className="flex gap-3">
+                <button
+                  onClick={() => setShowUpgradePrompt(false)}
+                  className="flex-1 px-6 py-3 rounded-xl border-2 border-gray-300 font-semibold hover:bg-gray-50 transition-all"
+                >
+                  취소
+                </button>
+                <button
+                  onClick={() => {
+                    setShowUpgradePrompt(false);
+                    setShowNewAnalysis(false);
+                    navigate('/pricing');
+                  }}
+                  className="flex-1 px-6 py-3 rounded-xl text-white font-semibold transition-all hover:shadow-lg"
+                  style={{ background: 'var(--accent)' }}
+                >
+                  요금제 보기
                 </button>
               </div>
             </div>

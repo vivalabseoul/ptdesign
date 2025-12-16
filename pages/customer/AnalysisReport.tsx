@@ -338,7 +338,7 @@ export function AnalysisReport() {
   // 탭 잠금 로직
   const isTabLocked = (tabId: string) => {
     // 무료 플랜인 경우 SEO 분석과 AI 디자인 지침서 탭 잠금
-    if (user?.subscription_plan === "free") {
+    if (user?.subscription_plan === "guest") {
       return ["seo", "guideline"].includes(tabId);
     }
     return false;

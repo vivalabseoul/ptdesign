@@ -56,14 +56,20 @@ export function AuthProvider({ children, onOpenAuthModal }: AuthProviderProps) {
   // 초기 세션 체크 - Supabase 세션에서 복원
   useEffect(() => {
     const initializeAuth = async () => {
+      console.log('[AuthContext DEBUG] initializeAuth 시작');
       try {
         const currentUser = await authApi.getCurrentUser();
+        console.log('[AuthContext DEBUG] getCurrentUser 결과:', currentUser);
         if (currentUser) {
+          console.log('[AuthContext DEBUG] 사용자 설정 - role:', currentUser.role);
           setUser(currentUser);
+        } else {
+          console.log('[AuthContext DEBUG] 사용자 없음');
         }
       } catch (error) {
-        console.error('인증 초기화 실패:', error);
+        console.error('[AuthContext DEBUG] 인증 초기화 실패:', error);
       } finally {
+        console.log('[AuthContext DEBUG] 로딩 완료');
         setLoading(false);
       }
     };
@@ -109,15 +115,24 @@ export function AuthProvider({ children, onOpenAuthModal }: AuthProviderProps) {
 
   // 이메일 회원가입
   const signUpWithEmail = async (email: string, password: string, name: string) => {
+    console.log('[AuthContext DEBUG] signUpWithEmail 호출 - email:', email);
     try {
       const data = await authApi.signUpWithEmail(email, password, name);
+      console.log('[AuthContext DEBUG] signUpWithEmail 성공 - data.user:', data.user);
       // 회원가입 후 자동 로그인
       if (data.user) {
+        console.log('[AuthContext DEBUG] 회원가입 후 getCurrentUser 호출');
         const currentUser = await authApi.getCurrentUser();
+        console.log('[AuthContext DEBUG] 회원가입 후 currentUser:', currentUser);
+        if (currentUser) {
+          console.log('[AuthContext DEBUG] 회원가입 후 사용자 설정 - role:', currentUser.role);
+        }
         setUser(currentUser);
+      } else {
+        console.warn('[AuthContext DEBUG] data.user가 없음');
       }
     } catch (error) {
-      console.error('이메일 회원가입 실패:', error);
+      console.error('[AuthContext DEBUG] 이메일 회원가입 실패:', error);
       throw error;
     }
   };

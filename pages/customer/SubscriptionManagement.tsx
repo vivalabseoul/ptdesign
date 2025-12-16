@@ -13,72 +13,88 @@ export function SubscriptionManagement() {
 
   const plans = [
     {
-      id: 'free' as PaymentPlan,
-      name: 'Free',
-      price: 0,
-      priceText: '₩0',
-      description: 'SEO 분석까지 무료',
+      id: 'basic' as PaymentPlan,
+      name: '퀵 스캔',
+      price: 29000,
+      priceText: '₩29K',
+      description: '뭔가 이상한데? 빠른 점검',
       features: [
-        'SEO 분석까지 무료',
-        '기본 분석 보고서',
-        'AI 작업 지침서'
+        '메인/랜딩페이지',
+        '기초 점검 레벨',
+        '개선 프롬프트 1종',
+        '4시간 초고속 납기',
+        '⚠️ SEO 지침서 미포함'
       ],
-      badge: null,
+      badge: '가장 저렴!',
       highlight: false
     },
     {
       id: 'basic' as PaymentPlan,
-      name: '베이직',
+      name: '마이크로 분석',
       price: 99000,
       priceText: '₩99K',
-      description: '1회 분석',
+      description: '스타트업, MVP, 긴급 진단',
       features: [
-        '전체 분석 결과 확인',
-        'PDF 분석 보고서',
-        'AI 작업 지침서',
-        '기본 UI/UX 점수',
-        '24시간 이내 발송'
+        '1페이지 (모바일/데스크톱)',
+        '기초 분석 + 기본 CVR 분석',
+        '개선 프롬프트 3종',
+        '✅ SEO 지침서 포함',
+        '기초 접근성 감사 + 체크리스트',
+        '24시간 빠른 납기'
       ],
-      badge: '가성비',
+      badge: '가성비 최고!',
       highlight: false
     },
     {
       id: 'pro' as PaymentPlan,
-      name: '프로',
+      name: '풀페이지 심층',
       price: 299000,
       priceText: '₩299K',
-      description: '1회 분석 (최대 3페이지)',
+      description: '중소기업, 이커머스 (최대 3페이지)',
       features: [
-        '전체 분석 결과 확인',
-        '상세 PDF 분석 보고서',
-        'AI 작업 지침서',
-        '종합 UI/UX 점수',
-        '개선 우선순위 제안',
-        '12시간 이내 발송'
+        '전체 1페이지 (크로스브라우징)',
+        '심층 분석 + 심화 CVR 분석',
+        '개선 프롬프트 5종 + 이미지 3개',
+        '✅ SEO 지침서 포함',
+        '완전 접근성 감사 + 히트맵/세션',
+        '72시간 납기'
       ],
       badge: '인기',
       highlight: true
     },
     {
       id: 'enterprise' as PaymentPlan,
-      name: '엔터프라이즈',
+      name: '전체 시스템',
       price: 0,
       priceText: '협의',
-      description: '맞춤형 솔루션',
+      description: '대규모 플랫폼, 장기 시스템 (최소 799K)',
       features: [
-        '무제한 URL 분석',
-        '커스텀 보고서',
-        '전담 매니저 배정',
-        '월간 분석 리포트',
-        '실시간 컨설팅',
-        '즉시 발송'
+        '전체 사이트 (크로스브라우징 심층)',
+        '전문가 분석 + 고급 CVR (퍼널)',
+        '개선 프롬프트 5종+ + 이미지 5개+',
+        '✅ SEO 지침서 포함',
+        'CSS 가이드 (기본/전체)',
+        '전사 접근성 표준화 + 심층 사용자 테스트',
+        '72시간 납기'
       ],
-      badge: '프리미엄',
+      badge: '풀버전!',
       highlight: false
     }
   ];
 
-  const currentPlan = plans.find(p => p.id === user?.subscription_plan) || plans[0];
+  // 결제하지 않은 고객은 'guest'로 표시
+  const guestPlan = {
+    id: 'guest' as PaymentPlan,
+    name: 'Guest',
+    price: 0,
+    priceText: '-',
+    description: '아직 구매한 플랜이 없습니다',
+    features: [],
+    badge: null,
+    highlight: false
+  };
+
+  const currentPlan = plans.find(p => p.id === user?.subscription_plan) || guestPlan;
 
   return (
     <DashboardLayout>
@@ -220,14 +236,7 @@ export function SubscriptionManagement() {
                     ))}
                   </ul>
 
-                  {plan.id === 'free' ? (
-                    <button
-                      disabled
-                      className="w-full py-3 rounded-xl font-semibold bg-gray-100 text-gray-400 cursor-not-allowed"
-                    >
-                      무료 플랜
-                    </button>
-                  ) : plan.id === 'enterprise' ? (
+                  {plan.id === 'enterprise' ? (
                     <button
                       onClick={() => window.open('mailto:contact@protouchdesign.com', '_blank')}
                       className="w-full py-3 rounded-xl font-semibold border-2 transition-all hover:shadow-lg"
