@@ -5,10 +5,12 @@ import { useState } from "react";
 import { PaymentButton } from "../components/PaymentButton";
 import { PaymentPlan } from "../utils/payment/nicepay";
 import { useAuth } from "../contexts/AuthContext";
+import { useNavigate } from "react-router-dom";
 
 export function PricingPage() {
   const [openFaq, setOpenFaq] = useState<number | null>(null);
-  const { openAuthModal } = useAuth();
+  const { openAuthModal, isAuthenticated } = useAuth();
+  const navigate = useNavigate();
 
   const plans = [
     {
@@ -389,7 +391,7 @@ export function PricingPage() {
             웹사이트의 성과를 극대화하세요.
           </p>
           <button
-            onClick={() => openAuthModal("signup")}
+            onClick={() => isAuthenticated ? navigate("/customer/dashboard") : openAuthModal("signup")}
             className="inline-flex items-center justify-center px-8 py-4 rounded-xl text-white font-bold text-lg transition-all hover:scale-105 hover:shadow-[0_0_30px_rgba(238,108,77,0.5)]"
             style={{ background: 'var(--accent)' }}
           >

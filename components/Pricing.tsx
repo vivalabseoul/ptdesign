@@ -1,8 +1,10 @@
 import { Check, ArrowRight } from "lucide-react";
 import { useAuth } from "../contexts/AuthContext";
+import { useNavigate } from "react-router-dom";
 
 export function Pricing() {
-  const { openAuthModal } = useAuth();
+  const { openAuthModal, isAuthenticated } = useAuth();
+  const navigate = useNavigate();
   
   const plans = [
     {
@@ -173,7 +175,7 @@ export function Pricing() {
 
               {/* CTA Button */}
               <button
-                onClick={() => openAuthModal("signup")}
+                onClick={() => isAuthenticated ? navigate("/pricing") : openAuthModal("signup")}
                 className={`w-full py-4 rounded-xl font-bold text-base transition-all duration-300 transform hover:scale-[1.02] active:scale-[0.98] ${
                   plan.highlight
                     ? "bg-[var(--accent)] text-white shadow-lg shadow-[var(--accent)]/30 hover:shadow-[var(--accent)]/50"
