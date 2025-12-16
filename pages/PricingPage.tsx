@@ -27,7 +27,7 @@ export function PricingPage() {
         "개선 프롬프트 1종",
         /*"1쪽 PDF 리포트 + TXT",*/
         "4시간 초고속 납기",
-        "⚠️ SEO 지침서 미포함"
+        "심플 SEO 지침서 포함"
       ],
       badge: "가장 저렴!",
       highlight: false,
@@ -35,7 +35,7 @@ export function PricingPage() {
     {
       id: "micro-analysis",
       planId: "basic" as PaymentPlan,
-      name: "마이크로 분석",
+      name: "마이크로",
       price: "99K",
       priceNum: 99000,
       desc: "스타트업, MVP, 긴급 진단",
@@ -44,7 +44,7 @@ export function PricingPage() {
         "1페이지 (모바일/데스크톱)",
         "기초 분석 + 기본 CVR 분석",
         "개선 프롬프트 3종",
-        "✅ SEO 지침서 포함",
+        "SEO 지침서 포함",
         "기초 접근성 감사 + 체크리스트",
         /*"2쪽 PDF 리포트 + TXT",*/
         "24시간 빠른 납기"
@@ -55,7 +55,7 @@ export function PricingPage() {
     {
       id: "full-page-deep",
       planId: "pro" as PaymentPlan,
-      name: "풀페이지 심층",
+      name: "엔터프라이즈",
       price: "299K",
       priceNum: 299000,
       desc: "중소기업, 이커머스 (최대 3페이지)",
@@ -64,7 +64,7 @@ export function PricingPage() {
         "전체 1페이지 (크로스브라우징)",
         "심층 분석 + 심화 CVR 분석",
         "개선 프롬프트 5종 + 이미지 3개",
-        "✅ SEO 지침서 포함",
+        "SEO 지침서 포함",
         "완전 접근성 감사 + 히트맵/세션",
         /*"5쪽 PDF 리포트 + TXT + 체크리스트",*/
         "72시간 납기"
@@ -75,7 +75,7 @@ export function PricingPage() {
     {
       id: "full-system",
       planId: "pro" as PaymentPlan,
-      name: "전체 시스템",
+      name: "프리미엄",
       price: "협의",
       priceNum: 799000,
       desc: "대규모 플랫폼, 장기 시스템 (최소 799K)",
@@ -84,7 +84,7 @@ export function PricingPage() {
         "전체 사이트 (크로스브라우징 심층)",
         "전문가 분석 + 고급 CVR (퍼널)",
         "개선 프롬프트 5종+ + 이미지 5개+",
-        "✅ SEO 지침서 포함",
+        "SEO 지침서 포함",
         "CSS 가이드 (기본/전체)",
         "전사 접근성 표준화 + 심층 사용자 테스트",
         /*"8~20쪽 상세 PDF 리포트 + TXT + 상세 체크리스트",*/
@@ -132,7 +132,7 @@ export function PricingPage() {
     },
     {
       q: "납기는 얼마나 걸리나요?",
-      a: "퀵 스캔은 4시간 내, 마이크로 분석은 24시간 내, 그 외 상품은 영업일 기준 72시간 내 납품됩니다."
+      a: "퀵 스캔은 4시간 내, 마이크로은 24시간 내, 그 외 상품은 영업일 기준 72시간 내 납품됩니다."
     },
     {
       q: "분석 범위를 초과하면 어떻게 되나요?",
@@ -140,7 +140,7 @@ export function PricingPage() {
     },
     {
       q: "여러 페이지를 분석하고 싶어요",
-      a: "풀페이지 심층 또는 전체 시스템 패키지를 선택하시거나, 별도 문의를 통해 맞춤 견적을 받으실 수 있습니다."
+      a: "엔터프라이즈 또는 프리미엄 패키지를 선택하시거나, 별도 문의를 통해 맞춤 견적을 받으실 수 있습니다."
     },
     {
       q: "결제 방법은 무엇이 있나요?",
@@ -263,9 +263,9 @@ export function PricingPage() {
                   <tr className="border-b border-white/10">
                     <th className="text-left p-6 text-gray-400 font-semibold">기능</th>
                     <th className="text-center p-6 text-white font-semibold">퀵 스캔</th>
-                    <th className="text-center p-6 text-white font-semibold">마이크로 분석</th>
-                    <th className="text-center p-6 text-white font-semibold bg-white/5">풀페이지 심층</th>
-                    <th className="text-center p-6 text-white font-semibold">전체 시스템</th>
+                    <th className="text-center p-6 text-white font-semibold">마이크로</th>
+                    <th className="text-center p-6 text-white font-semibold bg-white/5">엔터프라이즈</th>
+                    <th className="text-center p-6 text-white font-semibold">프리미엄</th>
                   </tr>
                 </thead>
                 <tbody>

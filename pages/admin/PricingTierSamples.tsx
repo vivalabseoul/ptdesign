@@ -36,7 +36,7 @@ const pricingTiers = [
   },
   {
     id: "micro-analysis",
-    name: "마이크로 분석",
+    name: "마이크로",
     price: "₩99K",
     badge: "가성비 최고!",
     color: "#EE6C4D",
@@ -68,7 +68,7 @@ const pricingTiers = [
   },
   {
     id: "full-page-deep",
-    name: "풀페이지 심층",
+    name: "엔터프라이즈",
     price: "₩299K",
     badge: "인기",
     color: "#EE6C4D",
@@ -104,7 +104,7 @@ const pricingTiers = [
   },
   {
     id: "full-system",
-    name: "전체 시스템",
+    name: "프리미엄",
     price: "₩799K+",
     badge: "풀버전!",
     color: "#1A1A1A",

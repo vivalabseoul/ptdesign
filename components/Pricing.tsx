@@ -26,7 +26,7 @@ export function Pricing() {
     },
     {
       id: "micro-analysis",
-      name: "마이크로 분석",
+      name: "마이크로",
       price: "99K",
       desc: "스타트업, MVP, 긴급 진단",
       usp: "24시간 납기 · 1페이지 완전 분석",
@@ -44,7 +44,7 @@ export function Pricing() {
     },
     {
       id: "full-page-deep",
-      name: "풀페이지 심층",
+      name: "엔터프라이즈",
       price: "299K",
       desc: "중소기업, 이커머스 (최대 3페이지)",
       usp: "72시간 납기 · 추가 페이지당 ₩80K",
@@ -62,7 +62,7 @@ export function Pricing() {
     },
     {
       id: "full-system",
-      name: "전체 시스템",
+      name: "프리미엄",
       price: "협의",
       desc: "대규모 플랫폼, 장기 시스템 (최소 799K)",
       usp: "72시간 납기 · 맞춤 견적 제공",
@@ -182,7 +182,7 @@ export function Pricing() {
                     : "bg-white text-black hover:bg-gray-100"
                 }`}
               >
-                지금 시작하기
+                자세히 보기
               </button>
             </div>
           ))}
