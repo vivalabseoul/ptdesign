@@ -112,9 +112,22 @@ export function CustomerDashboard() {
   };
 
   const [showUpgradePrompt, setShowUpgradePrompt] = useState(false);
+  const [urlError, setUrlError] = useState<string | null>(null);
+
+  // URL 유효성 검사 함수
+  const isValidUrl = (url: string) => {
+    return url.startsWith('http://') || url.startsWith('https://');
+  };
 
   const handleStartAnalysis = async () => {
     if (newUrl && user) {
+      // URL 유효성 검사
+      if (!isValidUrl(newUrl)) {
+        setUrlError('URL은 http:// 또는 https://로 시작해야 합니다.');
+        return;
+      }
+      setUrlError(null);
+
       // 결제 내역이 없는 고객인 경우 플랜 업그레이드 안내
       if (user.subscription_status !== 'active') {
         setShowUpgradePrompt(true);
@@ -419,11 +432,24 @@ export function CustomerDashboard() {
                   <input
                     type="url"
                     value={newUrl}
-                    onChange={(e) => setNewUrl(e.target.value)}
+                    onChange={(e) => {
+                      setNewUrl(e.target.value);
+                      setUrlError(null);
+                    }}
                     placeholder="https://example.com"
-                    className="w-full pl-12 pr-4 py-4 rounded-lg border-2 border-gray-200 focus:border-[var(--accent)] outline-none"
+                    className={`w-full pl-12 pr-4 py-4 rounded-lg border-2 outline-none transition-colors ${
+                      urlError ? 'border-red-400 focus:border-red-500' : 'border-gray-200 focus:border-[var(--accent)]'
+                    }`}
                   />
                 </div>
+                <p className="text-sm text-gray-500 mt-2">
+                  ⚠️ URL은 반드시 <strong>http://</strong> 또는 <strong>https://</strong>로 시작해야 합니다.
+                </p>
+                {urlError && (
+                  <p className="text-sm text-red-500 mt-1 font-medium">
+                    {urlError}
+                  </p>
+                )}
               </div>
 
               <div className="flex gap-3">

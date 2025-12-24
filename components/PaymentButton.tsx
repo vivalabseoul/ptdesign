@@ -66,8 +66,32 @@ export function PaymentButton({
   };
 
   return (
-    <Button onClick={handleClick} disabled={loading} className={className} style={style}>
-      {loading ? "처리 중..." : children}
-    </Button>
+    <div className="w-full">
+      <Button 
+        onClick={handleClick} 
+        disabled={loading} 
+        className={className} 
+        style={style}
+      >
+        {loading ? (
+          <span className="flex items-center gap-2">
+            <span className="inline-block w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
+            <span>처리 중...</span>
+          </span>
+        ) : (
+          children
+        )}
+      </Button>
+      {!loading && (
+        <div className="flex items-center justify-center gap-3 mt-2 text-xs text-gray-500">
+          <span className="flex items-center gap-1">
+            <span>🔒</span>
+            <span>안전한 결제</span>
+          </span>
+          <span>•</span>
+          <span>Nice Pay</span>
+        </div>
+      )}
+    </div>
   );
 }

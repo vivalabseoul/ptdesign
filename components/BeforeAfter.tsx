@@ -187,7 +187,7 @@ export function BeforeAfter() {
                 ))}
               </div>
 
-              {/* Description with Icon */}
+              {/* Description with Icon 
               <div className="relative p-4 rounded-xl border-2 border-dashed border-purple-200 bg-purple-50/50">
                 <div className="flex gap-3">
                   <TrendingUp className="w-6 h-6 flex-shrink-0" style={{ color: "var(--accent)" }} />
@@ -195,7 +195,7 @@ export function BeforeAfter() {
                     {featuredCase.description}
                   </p>
                 </div>
-              </div>
+              </div>*/}
 
               {/* CTA Button */}
               <Link

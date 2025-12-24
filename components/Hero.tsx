@@ -14,6 +14,12 @@ export function Hero({ onAnalyze, isAnalyzing, isAuthenticated, onNavigateToDash
   const { openAuthModal, user } = useAuth();
   const navigate = useNavigate();
   const [url, setUrl] = useState("");
+  const [urlError, setUrlError] = useState<string | null>(null);
+
+  // URL 유효성 검사 함수
+  const isValidUrl = (url: string) => {
+    return url.startsWith('http://') || url.startsWith('https://');
+  };
 
   // 페이지 로드 시 저장된 URL 복원 (자동 실행 X)
   useEffect(() => {
@@ -27,6 +33,12 @@ export function Hero({ onAnalyze, isAnalyzing, isAuthenticated, onNavigateToDash
 
   const handleAnalyze = () => {
     if (url) {
+      // URL 유효성 검사
+      if (!isValidUrl(url)) {
+        setUrlError('URL은 http:// 또는 https://로 시작해야 합니다.');
+        return;
+      }
+      setUrlError(null);
       sessionStorage.setItem("pending_analysis_url", url);
       if (user) {
         navigate("/customer/dashboard");
@@ -81,10 +93,10 @@ export function Hero({ onAnalyze, isAnalyzing, isAuthenticated, onNavigateToDash
           style={{ animationFillMode: "forwards" }}
         >
           <div
-            className="flex flex-col sm:flex-row gap-3 p-2 rounded-2xl shadow-2xl border-2"
+            className="flex flex-col sm:flex-row gap-3 p-2 rounded-2xl shadow-2xl border-2 transition-colors"
             style={{
               background: "rgba(255, 255, 255, 0.1)",
-              borderColor: "var(--accent)",
+              borderColor: urlError ? "#ef4444" : "var(--accent)",
             }}
           >
             <div className="flex items-center flex-1 px-4 gap-3">
@@ -93,7 +105,10 @@ export function Hero({ onAnalyze, isAnalyzing, isAuthenticated, onNavigateToDash
                 type="url"
                 placeholder="분석할 웹사이트 URL을 입력하세요 (예: https://example.com)"
                 value={url}
-                onChange={(e) => setUrl(e.target.value)}
+                onChange={(e) => {
+                  setUrl(e.target.value);
+                  setUrlError(null);
+                }}
                 onKeyPress={(e) => e.key === "Enter" && handleAnalyze()}
                 className="flex-1 outline-none bg-transparent text-white placeholder:text-gray-500"
               />
@@ -106,8 +121,13 @@ export function Hero({ onAnalyze, isAnalyzing, isAuthenticated, onNavigateToDash
               분석 시작
             </button>
           </div>
+          {urlError && (
+            <p className="mt-3 text-red-400 text-sm font-medium">
+              ⚠️ {urlError}
+            </p>
+          )}
           <p className="mt-4 text-base text-gray-400">
-            즉시 결과 확인 · 회원가입후 사용가능
+            즉시 결과 확인 · 회원가입후 사용가능 · <span className="text-gray-500">URL은 http:// 또는 https://로 시작해야 합니다</span>
           </p>
         </div>
 

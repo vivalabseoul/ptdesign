@@ -104,24 +104,88 @@ export function PaymentSuccess() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-white">
-      <Card className="max-w-md mx-4 border-2 border-primary">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-green-50 to-blue-50">
+      <Card className="max-w-lg mx-4 border-2 border-green-500 shadow-2xl">
         <CardHeader className="text-center">
-          <div className="text-6xl mb-4">✅</div>
-          <CardTitle className="text-2xl mb-2">결제가 완료되었습니다!</CardTitle>
-          <CardDescription>
+          {/* 성공 애니메이션 */}
+          <div className="relative mx-auto w-24 h-24 mb-4">
+            <div className="absolute inset-0 bg-green-500 rounded-full animate-ping opacity-20"></div>
+            <div className="relative flex items-center justify-center w-24 h-24 bg-green-500 rounded-full">
+              <span className="text-5xl">✓</span>
+            </div>
+          </div>
+          <CardTitle className="text-3xl mb-2 text-green-700">결제가 완료되었습니다!</CardTitle>
+          <CardDescription className="text-lg">
             {planId === 'basic' ? '베이직' : planId === 'pro' ? '프로' : '엔터프라이즈'} 플랜이 활성화되었습니다.
           </CardDescription>
         </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="bg-green-50 border border-green-200 rounded-lg p-4">
-            <p className="text-sm text-green-900">
-              이제 전체 분석 결과와 상세 보고서를 확인할 수 있습니다.
-            </p>
+        <CardContent className="space-y-6">
+          {/* 주문 정보 */}
+          <div className="bg-white border border-gray-200 rounded-lg p-4 space-y-2">
+            <h3 className="font-semibold text-gray-900 mb-3">주문 정보</h3>
+            <div className="flex justify-between text-sm">
+              <span className="text-gray-600">주문 번호</span>
+              <span className="font-mono text-gray-900">{orderId}</span>
+            </div>
+            <div className="flex justify-between text-sm">
+              <span className="text-gray-600">플랜</span>
+              <span className="font-semibold text-gray-900">
+                {planId === 'basic' ? '베이직 플랜' : planId === 'pro' ? '프로 플랜' : '엔터프라이즈 플랜'}
+              </span>
+            </div>
+            <div className="flex justify-between text-sm">
+              <span className="text-gray-600">결제 일시</span>
+              <span className="text-gray-900">{new Date().toLocaleString('ko-KR')}</span>
+            </div>
           </div>
-          <Button onClick={() => navigate('/dashboard')} className="w-full btn-primary">
-            대시보드로 이동
-          </Button>
+
+          {/* 다음 단계 안내 */}
+          <div className="bg-green-50 border border-green-200 rounded-lg p-4">
+            <h3 className="font-semibold text-green-900 mb-2 flex items-center gap-2">
+              <span>🎉</span>
+              <span>다음 단계</span>
+            </h3>
+            <ul className="text-sm text-green-800 space-y-2">
+              <li className="flex items-start gap-2">
+                <span className="text-green-600 mt-0.5">1.</span>
+                <span>이메일로 발송된 영수증을 확인하세요</span>
+              </li>
+              <li className="flex items-start gap-2">
+                <span className="text-green-600 mt-0.5">2.</span>
+                <span>대시보드에서 웹사이트 URL을 입력하여 분석을 시작하세요</span>
+              </li>
+              <li className="flex items-start gap-2">
+                <span className="text-green-600 mt-0.5">3.</span>
+                <span>분석 완료 후 상세 보고서를 확인하세요</span>
+              </li>
+            </ul>
+          </div>
+
+          {/* 보안 배지 */}
+          <div className="flex items-center justify-center gap-4 py-2 border-t border-gray-200">
+            <div className="flex items-center gap-2 text-xs text-gray-600">
+              <span>🔒</span>
+              <span>SSL 보안 결제</span>
+            </div>
+            <div className="flex items-center gap-2 text-xs text-gray-600">
+              <span>✓</span>
+              <span>PCI-DSS 인증</span>
+            </div>
+          </div>
+
+          {/* 액션 버튼 */}
+          <div className="space-y-2">
+            <Button onClick={() => navigate('/dashboard')} className="w-full btn-primary text-lg py-6">
+              분석 시작하기
+            </Button>
+            <Button 
+              onClick={() => navigate('/')} 
+              variant="outline" 
+              className="w-full"
+            >
+              홈으로 이동
+            </Button>
+          </div>
         </CardContent>
       </Card>
     </div>

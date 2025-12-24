@@ -90,10 +90,12 @@ export const requestPayment = async (
       return { success: false, error: 'Invalid plan' };
     }
 
-    // 나이스페이는 MID(가맹점 ID)만 필수로 사용
-    const merchantId = import.meta.env.VITE_NICEPAY_MERCHANT_ID;
+    // 나이스페이 인증 정보
+    const clientId = import.meta.env.VITE_NICEPAY_CLIENT_ID;
+    const secretKey = import.meta.env.VITE_NICEPAY_SECRET_KEY;
     console.log("💰 개발 모드:", import.meta.env.DEV);
-    console.log("💰 가맹점 ID:", merchantId ? "있음" : "없음");
+    console.log("💰 클라이언트 ID:", clientId ? "있음" : "없음");
+    console.log("💰 시크릿 키:", secretKey ? "있음" : "없음");
 
     // 개발 모드: 결제 시뮬레이션 (실제 결제 없이 테스트)
     if (import.meta.env.DEV) {
@@ -108,10 +110,10 @@ export const requestPayment = async (
     }
 
     // 프로덕션 모드: 실제 나이스페이 결제
-    if (!merchantId) {
+    if (!clientId || !secretKey) {
       return {
         success: false,
-        error: '나이스페이 가맹점 ID가 설정되지 않았습니다. .env 파일에 VITE_NICEPAY_MERCHANT_ID를 추가해주세요.'
+        error: '나이스페이 인증 정보가 설정되지 않았습니다. .env 파일에 VITE_NICEPAY_CLIENT_ID와 VITE_NICEPAY_SECRET_KEY를 추가해주세요.'
       };
     }
 
@@ -135,26 +137,23 @@ export const requestPayment = async (
     form.style.display = 'none';
 
     // 나이스페이 필수 파라미터 설정
-    // 나이스페이 결제창 연동 가이드 참고: https://help.portone.io/content/nice
+    // 나이스페이 JS SDK 연동 가이드: https://developer.nicepay.co.kr/
     const params: Record<string, string> = {
-      PayMethod: 'CARD', // 카드결제 (다른 결제수단: BANK(계좌이체), VBANK(가상계좌), CELLPHONE(휴대폰))
-      GoodsCnt: '1', // 상품 수량
-      GoodsCl: '1', // 상품 구분
-      Amt: amount.toString(), // 결제 금액
-      MID: merchantId, // 가맹점 ID
-      Moid: orderId, // 주문번호
-      BuyerName: userName, // 구매자 이름
-      BuyerEmail: userEmail, // 구매자 이메일
-      GoodsName: orderName, // 상품명
-      ReturnURL: successUrl, // 결제 완료 후 리다이렉트 URL
-      NotiURL: `${window.location.origin}/api/payment/notify`, // 가맹점 서버 결제 결과 수신 URL (서버 사이드 처리 필요)
-      CancelURL: failUrl, // 결제 취소 시 리다이렉트 URL
-      MallReserved: JSON.stringify({
+      clientId: clientId, // 클라이언트 ID (필수)
+      method: 'card', // 결제수단: card(카드), vbank(가상계좌), bank(계좌이체), cellphone(휴대폰)
+      orderId: orderId, // 주문번호 (가맹점에서 생성한 고유값)
+      amount: amount.toString(), // 결제 금액
+      goodsName: orderName, // 상품명
+      buyerName: userName, // 구매자 이름
+      buyerEmail: userEmail, // 구매자 이메일
+      returnUrl: successUrl, // 결제 완료 후 리다이렉트 URL
+      cancelUrl: failUrl, // 결제 취소 시 리다이렉트 URL
+      mallReserved: JSON.stringify({
         planId,
         userId,
-      }), // 예약 필드 (추가 정보 저장)
-      CharSet: 'UTF-8', // 문자 인코딩
-      EdiDate: new Date().toISOString().replace(/[-:]/g, '').split('.')[0], // YYYYMMDDHHmmss 형식
+      }), // 가맹점 예약 필드 (추가 정보 저장)
+      charSet: 'utf-8', // 문자 인코딩
+      ediDate: new Date().toISOString().replace(/[-:]/g, '').split('.')[0], // YYYYMMDDHHmmss 형식
     };
 
     // 폼에 파라미터 추가

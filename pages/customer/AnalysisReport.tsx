@@ -1045,6 +1045,36 @@ export function AnalysisReport() {
                       </div>
                     </div>
 
+                    {/* Score Visualization */}
+                    <div className="card-padding bg-white">
+                      <h4 className="text-base font-semibold text-gray-700 mb-3">점수 시각화</h4>
+                      <div className="h-16">
+                        <ResponsiveContainer width="100%" height="100%">
+                          <BarChart
+                            data={[{ name: criteria.category, score: criteria.score, max: 100 }]}
+                            layout="vertical"
+                            margin={{ top: 0, right: 30, left: 0, bottom: 0 }}
+                          >
+                            <CartesianGrid strokeDasharray="3 3" stroke="#E5E7EB" />
+                            <XAxis type="number" domain={[0, 100]} tick={{ fill: "#6B7280", fontSize: 12 }} />
+                            <YAxis type="category" dataKey="name" hide />
+                            <Tooltip />
+                            <Bar
+                              dataKey="score"
+                              fill={
+                                criteria.score >= 70
+                                  ? "#84A98C"
+                                  : criteria.score >= 50
+                                  ? "#F59E0B"
+                                  : "#EE6C4D"
+                              }
+                              radius={[0, 8, 8, 0]}
+                            />
+                          </BarChart>
+                        </ResponsiveContainer>
+                      </div>
+                    </div>
+
                     <div className="divide-y divide-gray-200 flex-1">
                       {criteria.subcriteria.map((sub, subIndex) => (
                         <div
@@ -1075,6 +1105,30 @@ export function AnalysisReport() {
                               <p className="text-base lg:text-lg text-gray-700 mb-2 leading-relaxed break-words">
                                 {sub.description}
                               </p>
+                              
+                              {/* Progress Bar Visualization */}
+                              <div className="mb-3">
+                                <div className="flex items-center gap-2 mb-1">
+                                  <div className="flex-1 h-3 bg-gray-200 rounded-full overflow-hidden">
+                                    <div
+                                      className="h-full rounded-full transition-all duration-500"
+                                      style={{
+                                        width: `${sub.score}%`,
+                                        backgroundColor:
+                                          sub.score >= 70
+                                            ? "#84A98C"
+                                            : sub.score >= 50
+                                            ? "#F59E0B"
+                                            : "#EE6C4D",
+                                      }}
+                                    />
+                                  </div>
+                                  <span className="text-sm font-semibold text-gray-600 min-w-[45px] text-right">
+                                    {sub.score}%
+                                  </span>
+                                </div>
+                              </div>
+                              
                               <div className="text-base text-gray-600">
                                 <span className="font-semibold">기준:</span>{" "}
                                 {sub.benchmark}

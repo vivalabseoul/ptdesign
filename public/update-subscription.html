@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>구독 상태 업데이트</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+        }
+        h1 {
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+        .subtitle {
+            color: #666;
+            margin-bottom: 30px;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #333;
+        }
+        input, select {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            font-size: 14px;
+            box-sizing: border-box;
+        }
+        input:focus, select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 12px 30px;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            width: 100%;
+            font-weight: bold;
+            transition: transform 0.2s;
+        }
+        button:hover {
+            transform: translateY(-2px);
+        }
+        button:active {
+            transform: translateY(0);
+        }
+        .result {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 5px;
+            display: none;
+        }
+        .success {
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+        }
+        .error {
+            background: #f8d7da;
+            border: 1px solid #f5c6cb;
+            color: #721c24;
+        }
+        .info {
+            background: #d1ecf1;
+            border: 1px solid #bee5eb;
+            color: #0c5460;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+        .plan-info {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+        .plan-info h3 {
+            margin-top: 0;
+            color: #667eea;
+        }
+        .plan-info ul {
+            margin: 10px 0;
+            padding-left: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔧 구독 상태 업데이트</h1>
+        <p class="subtitle">사용자의 구독 플랜과 상태를 업데이트합니다</p>
+
+        <div class="info">
+            <strong>ℹ️ 안내:</strong> 이 도구는 개발/테스트 환경에서 사용자의 구독 상태를 직접 업데이트합니다. 
+            실제 결제 없이 유료 플랜을 테스트할 수 있습니다.
+        </div>
+
+        <div class="plan-info">
+            <h3>📋 사용 가능한 플랜</h3>
+            <ul>
+                <li><strong>guest</strong>: 게스트 (무료, SEO 분석까지만)</li>
+                <li><strong>basic</strong>: 베이직 (₩99,000 - 전체 분석)</li>
+                <li><strong>pro</strong>: 프로 (₩299,000 - 상세 분석 + 우선순위)</li>
+                <li><strong>enterprise</strong>: 엔터프라이즈 (문의 - 무제한)</li>
+            </ul>
+        </div>
+
+        <form id="updateForm">
+            <div class="form-group">
+                <label for="userEmail">사용자 이메일</label>
+                <input type="email" id="userEmail" placeholder="test6789@example.com" required>
+            </div>
+
+            <div class="form-group">
+                <label for="subscriptionPlan">구독 플랜</label>
+                <select id="subscriptionPlan" required>
+                    <option value="">플랜 선택...</option>
+                    <option value="guest">Guest (무료)</option>
+                    <option value="basic">Basic (₩99,000)</option>
+                    <option value="pro">Pro (₩299,000)</option>
+                    <option value="enterprise">Enterprise (문의)</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="subscriptionStatus">구독 상태</label>
+                <select id="subscriptionStatus" required>
+                    <option value="">상태 선택...</option>
+                    <option value="active">Active (활성)</option>
+                    <option value="inactive">Inactive (비활성)</option>
+                    <option value="cancelled">Cancelled (취소됨)</option>
+                </select>
+            </div>
+
+            <button type="submit">구독 상태 업데이트</button>
+        </form>
+
+        <div id="result" class="result"></div>
+    </div>
+
+    <script type="module">
+        import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
+
+        const supabaseUrl = 'https://hfwqtcgwdqvxfhwgmwfp.supabase.co';
+        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imhmd3F0Y2d3ZHF2eGZod2dtd2ZwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzY3NDc0NjAsImV4cCI6MjA1MjMyMzQ2MH0.8wLmGTXJJLUiAOlQpRZNBQJLqQvdqN1-eTGtpwLZQQI';
+        const supabase = createClient(supabaseUrl, supabaseKey);
+
+        document.getElementById('updateForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const userEmail = document.getElementById('userEmail').value;
+            const subscriptionPlan = document.getElementById('subscriptionPlan').value;
+            const subscriptionStatus = document.getElementById('subscriptionStatus').value;
+            const resultDiv = document.getElementById('result');
+
+            try {
+                console.log('🔍 사용자 조회 중:', userEmail);
+
+                // 1. 사용자 찾기
+                const { data: users, error: findError } = await supabase
+                    .from('users')
+                    .select('*')
+                    .eq('email', userEmail);
+
+                if (findError) {
+                    throw new Error(`사용자 조회 실패: ${findError.message}`);
+                }
+
+                if (!users || users.length === 0) {
+                    throw new Error(`이메일 ${userEmail}에 해당하는 사용자를 찾을 수 없습니다.`);
+                }
+
+                const user = users[0];
+                console.log('✅ 사용자 찾음:', user);
+
+                // 2. 구독 상태 업데이트
+                console.log('📝 구독 상태 업데이트 중...');
+                const { data: updateData, error: updateError } = await supabase
+                    .from('users')
+                    .update({
+                        subscription_plan: subscriptionPlan,
+                        subscription_status: subscriptionStatus,
+                        updated_at: new Date().toISOString()
+                    })
+                    .eq('id', user.id)
+                    .select();
+
+                if (updateError) {
+                    throw new Error(`업데이트 실패: ${updateError.message}`);
+                }
+
+                console.log('✅ 업데이트 성공:', updateData);
+
+                resultDiv.className = 'result success';
+                resultDiv.style.display = 'block';
+                resultDiv.innerHTML = `
+                    <strong>✅ 성공!</strong><br>
+                    사용자: ${userEmail}<br>
+                    플랜: ${subscriptionPlan}<br>
+                    상태: ${subscriptionStatus}<br>
+                    <br>
+                    <em>페이지를 새로고침하면 변경사항이 반영됩니다.</em>
+                `;
+
+            } catch (error) {
+                console.error('❌ 오류:', error);
+                resultDiv.className = 'result error';
+                resultDiv.style.display = 'block';
+                resultDiv.innerHTML = `<strong>❌ 오류 발생</strong><br>${error.message}`;
+            }
+        });
+
+        // 페이지 로드 시 현재 로그인된 사용자 이메일 자동 입력
+        window.addEventListener('load', async () => {
+            try {
+                const { data: { user } } = await supabase.auth.getUser();
+                if (user && user.email) {
+                    document.getElementById('userEmail').value = user.email;
+                }
+            } catch (error) {
+                console.log('자동 이메일 입력 실패:', error);
+            }
+        });
+    </script>
+</body>
+</html>
