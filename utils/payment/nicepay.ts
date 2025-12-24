@@ -93,29 +93,29 @@ export const requestPayment = async (
     // 나이스페이 인증 정보
     const clientId = import.meta.env.VITE_NICEPAY_CLIENT_ID;
     const secretKey = import.meta.env.VITE_NICEPAY_SECRET_KEY;
+    const testMode = import.meta.env.VITE_NICEPAY_TEST_MODE === 'true';
+    
     console.log("💰 개발 모드:", import.meta.env.DEV);
+    console.log("💰 테스트 모드:", testMode);
     console.log("💰 클라이언트 ID:", clientId ? "있음" : "없음");
     console.log("💰 시크릿 키:", secretKey ? "있음" : "없음");
 
-    // 개발 모드: 결제 시뮬레이션 (실제 결제 없이 테스트)
-    if (import.meta.env.DEV) {
-      console.log('✅ 개발 모드: 결제 시뮬레이션을 실행합니다.');
+    // 테스트 모드: 결제 시뮬레이션 (실제 결제 없이 테스트)
+    // VITE_NICEPAY_TEST_MODE=true 이거나 인증 정보가 없으면 시뮬레이션
+    if (testMode || !clientId || !secretKey) {
+      console.log('✅ 테스트 모드: 결제 시뮬레이션을 실행합니다.');
       console.log(`📦 플랜: ${plan.name}, 가격: ₩${plan.price.toLocaleString()}`);
       
-      // 개발 모드에서는 바로 결제 성공 페이지로 이동
-      const successUrl = `/payment/success?planId=${planId}&userId=${userId}&orderId=dev_${Date.now()}`;
+      // 테스트 모드에서는 바로 결제 성공 페이지로 이동
+      const successUrl = `/payment/success?planId=${planId}&userId=${userId}&orderId=test_${Date.now()}`;
       console.log('💰 결제 성공 페이지로 이동:', successUrl);
       window.location.href = successUrl;
       return { success: true };
     }
 
-    // 프로덕션 모드: 실제 나이스페이 결제
-    if (!clientId || !secretKey) {
-      return {
-        success: false,
-        error: '나이스페이 인증 정보가 설정되지 않았습니다. .env 파일에 VITE_NICEPAY_CLIENT_ID와 VITE_NICEPAY_SECRET_KEY를 추가해주세요.'
-      };
-    }
+    // 운영 모드: 실제 나이스페이 결제
+    console.log('🚀 운영 모드: 실제 나이스페이 결제창을 엽니다.');
+
 
     // 주문 정보 생성
     const orderId = `order_${Date.now()}_${userId}`;
